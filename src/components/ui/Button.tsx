@@ -6,7 +6,7 @@ type Variant = "primary" | "dark" | "outline" | "outline-on-dark" | "ghost";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold leading-tight whitespace-nowrap transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60";
+  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold leading-tight transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
   // Donkere tekst op oranje: ±6,0:1
@@ -26,17 +26,19 @@ const sizes: Record<Size, string> = {
 interface StyleProps {
   variant?: Variant;
   size?: Size;
+  /** Lange knoptekst mag over meerdere regels lopen (standaard blijft de tekst op één regel). */
+  wrap?: boolean;
   className?: string;
 }
 
-export function buttonClasses({ variant = "primary", size = "md", className }: StyleProps = {}): string {
-  return cn(base, variants[variant], sizes[size], className);
+export function buttonClasses({ variant = "primary", size = "md", wrap = false, className }: StyleProps = {}): string {
+  return cn(base, wrap ? "text-center whitespace-normal" : "whitespace-nowrap", variants[variant], sizes[size], className);
 }
 
 type ButtonProps = StyleProps & Omit<ComponentProps<"button">, "className">;
 
-export function Button({ variant, size, className, type = "button", ...props }: ButtonProps) {
-  return <button type={type} className={buttonClasses({ variant, size, className })} {...props} />;
+export function Button({ variant, size, wrap, className, type = "button", ...props }: ButtonProps) {
+  return <button type={type} className={buttonClasses({ variant, size, wrap, className })} {...props} />;
 }
 
 interface ButtonLinkProps extends StyleProps {
@@ -46,8 +48,8 @@ interface ButtonLinkProps extends StyleProps {
 }
 
 /** Link met het uiterlijk van een knop. Kiest zelf tussen `next/link` en een gewone `<a>`. */
-export function ButtonLink({ href, children, variant, size, className, ...rest }: ButtonLinkProps) {
-  const classes = buttonClasses({ variant, size, className });
+export function ButtonLink({ href, children, variant, size, wrap, className, ...rest }: ButtonLinkProps) {
+  const classes = buttonClasses({ variant, size, wrap, className });
 
   if (/^(tel:|mailto:|https?:|#)/.test(href)) {
     const newTab = /^https?:/.test(href);
