@@ -9,11 +9,13 @@ import { Icon } from "@/components/ui/Icon";
 import { routes } from "@/lib/site";
 import { telHref } from "@/lib/utils";
 import { Reference } from "./Reference";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/bedankt/",
   title: "Bedankt voor uw aanvraag",
   robots: { index: false, follow: false },
-};
+});
 
 /** Bedankpagina na het versturen van een formulier. Niet geïndexeerd. */
 export default function ThanksPage() {

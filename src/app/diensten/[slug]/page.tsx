@@ -6,6 +6,7 @@ import { site } from "@config/site";
 import { images } from "@content/images.generated";
 import { getServiceDetail } from "@content/services";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { FaqList } from "@/components/sections/FaqAccordion";
 import { ProjectCard } from "@/components/sections/ProjectCard";
@@ -19,7 +20,9 @@ import { Icon } from "@/components/ui/Icon";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { formatEuro, unitLabels } from "@/lib/pricing/format";
 import { getPriceList } from "@/lib/pricing/price-list";
-import { getActiveServices, getProjectsForService, getService, quoteHref, routes } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
+import { getActiveServices, getProjectsForService, getService, quoteHref, routes, serviceHref } from "@/lib/site";
+import { faqJsonLd, serviceJsonLd } from "@/lib/structured-data";
 import { inSentence, telHref } from "@/lib/utils";
 
 // Alleen diensten die in de config aan staan krijgen een pagina; al het andere is een 404.
@@ -38,10 +41,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const region = site.serviceArea.regionLabel;
 
   // Patroon: [Dienst] [plaats] | Evers Totaal Montage. De plaats volgt zodra de regio in de config staat.
-  return {
+  return pageMetadata({
+    path: serviceHref(slug),
     title: region ? `${detail.metaTitle} ${region}` : detail.metaTitle,
     description: detail.metaDescription,
-  };
+    image: `dienst-${slug}`,
+  });
 }
 
 export default async function ServicePage({ params }: PageProps) {
@@ -62,6 +67,8 @@ export default async function ServicePage({ params }: PageProps) {
   return (
     <>
       <Breadcrumbs items={[{ label: "Diensten", href: routes.services }, { label: service.title }]} />
+      <JsonLd data={serviceJsonLd(service, detail.metaDescription)} />
+      <JsonLd data={faqJsonLd(detail.faq)} />
 
       {/* Kop en inleiding */}
       <section aria-labelledby="dienst-titel" className="bg-sand">

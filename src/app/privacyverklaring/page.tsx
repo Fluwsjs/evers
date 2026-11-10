@@ -7,11 +7,13 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Prose } from "@/components/ui/Prose";
 import { mailHref, telHref } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/privacyverklaring/",
   title: "Privacyverklaring",
   description: `Hoe ${site.name} omgaat met uw persoonsgegevens: welke gegevens wij verwerken, waarom, hoe lang wij ze bewaren en welke rechten u heeft.`,
-};
+});
 
 /**
  * Privacyverklaring.

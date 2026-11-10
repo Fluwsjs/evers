@@ -8,17 +8,19 @@ import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { getPriceGroups, hasVisiblePrices } from "@/lib/pricing/price-list";
+import { pageMetadata } from "@/lib/seo";
 
 const pricesVisible = hasVisiblePrices();
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/prijzen/",
   title: pricesVisible ? "Prijzen: wat kost een dakdekker?" : "Prijzen",
   description: pricesVisible
     ? `Vanaf-prijzen van ${site.name} per m², per meter en per stuk. Bereken met de calculator een indicatie inclusief btw en vraag direct een offerte aan.`
     : `Wat bepaalt de prijs van dakwerk? Vraag een vrijblijvende offerte aan bij ${site.name}.`,
   // Zonder prijzen heeft deze pagina zoekers weinig te bieden; dan blijft ze uit de index.
   ...(pricesVisible ? {} : { robots: { index: false, follow: true } }),
-};
+});
 
 /** Wat de prijs van dakwerk bepaalt. Algemene vakkennis, geen toezeggingen van het bedrijf. */
 const priceFactors = [

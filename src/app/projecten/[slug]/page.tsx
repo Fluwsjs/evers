@@ -15,7 +15,8 @@ import { ClientTodo } from "@/components/ui/ClientTodo";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { Section, SectionHeading } from "@/components/ui/Section";
-import { getActivePlaces, getService, placeHref, routes, serviceHref } from "@/lib/site";
+import { getActivePlaces, getService, placeHref, routes, serviceHref, projectHref } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -30,10 +31,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const project = projects.find((item) => item.slug === slug);
   if (!project) return {};
 
-  return {
+  return pageMetadata({
+    path: projectHref(project.slug),
     title: `${project.title}: project`,
     description: `${project.summary} Bekijk de foto's van dit project van ${site.shortName}.`,
-  };
+    image: `project-${project.slug}`,
+  });
 }
 
 export default async function ProjectPage({ params }: PageProps) {

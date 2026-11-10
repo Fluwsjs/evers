@@ -8,13 +8,17 @@ import { MobileActionBar } from "@/components/layout/MobileActionBar";
 import { ScrollAids } from "@/components/layout/ScrollAids";
 import { MAIN_CONTENT_ID, SkipLink } from "@/components/layout/SkipLink";
 import { TopBar } from "@/components/layout/TopBar";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { Analytics } from "@/components/seo/Analytics";
+import { businessJsonLd } from "@/lib/structured-data";
 import "./globals.css";
 
 // next/font downloadt de lettertypen tijdens de build en serveert ze vanaf het eigen domein.
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap", weight: ["600", "800"] });
 
-// Volledige metadata per pagina (canonical, Open Graph, JSON-LD) volgt in fase 9.
+// Basis voor alle pagina's. Titel, omschrijving, canonical en deelafbeelding zet elke pagina zelf
+// via `pageMetadata` (src/lib/seo.ts).
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -41,6 +45,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Footer />
         <MobileActionBar />
         <ScrollAids />
+        <JsonLd data={businessJsonLd()} />
+        <Analytics />
       </body>
     </html>
   );

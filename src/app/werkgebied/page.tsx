@@ -10,13 +10,15 @@ import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatList, getActivePlaces, placeHref, projectHref } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 
 const places = getActivePlaces();
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/werkgebied/",
   title: `Werkgebied: dakdekker in ${formatList(places.map((place) => place.name))}`,
   description: `${site.shortName} werkt onder meer in ${formatList(places.map((place) => place.name))}. Bekijk per plaats ons werk en waar u bij uw dak op kunt letten.`,
-};
+});
 
 export default function ServiceAreaPage() {
   const names = formatList(places.map((place) => place.name));

@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 8. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 9. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)
@@ -91,3 +91,11 @@ live site "Prijs op aanvraag", is de calculator verborgen en wordt /prijzen/ nie
 - [ ] Minimumbedrag per klus, als dat er is (de calculator kan ermee rekenen)
 - [ ] Btw: bevestigen dat overal 21% geldt
 - [ ] Tekst "Wat bepaalt de prijs van uw dak?" op /prijzen/ laten nalezen
+
+## Vindbaarheid (SEO)
+
+- [ ] Regio voor in de paginatitels (bijv. "Arnhem"): zodra `serviceArea.regionLabel` is ingevuld worden de titels "Dakrenovatie Arnhem | Evers Totaal Montage"
+- [ ] Adres, openingstijden en Google-score: komen vanzelf in de structured data zodra ze in de config staan en bevestigd zijn
+- [ ] Plausible-account (of een ander cookieloos statistiekenpakket) en het domein voor `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`
+- [ ] Na livegang: sitemap aanmelden in Google Search Console en de oude adressen daar controleren
+- [ ] Deelafbeeldingen (`public/og/`) opnieuw maken met `npm run og` na nieuwe foto's, diensten, projecten of plaatsen

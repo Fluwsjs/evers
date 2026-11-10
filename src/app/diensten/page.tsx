@@ -7,11 +7,13 @@ import { ServiceCard } from "@/components/sections/ServiceCard";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { getServiceGroups } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/diensten/",
   title: "Diensten: dakrenovatie, platte daken, lood- en zinkwerk",
   description: `Alle diensten van ${site.name} op een rij: dakrenovatie, platte daken, schoorsteenrenovatie, lood- en zinkwerk, timmerwerk en VELUX dakramen.`,
-};
+});
 
 /** Dienstenoverzicht, gegroepeerd per categorie. Elke dienst linkt naar een eigen pagina. */
 export default function ServicesPage() {

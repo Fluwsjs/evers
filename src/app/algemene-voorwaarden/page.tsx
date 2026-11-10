@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Prose } from "@/components/ui/Prose";
 import { mailHref, telHref } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
 /**
  * Algemene voorwaarden.
@@ -17,11 +18,12 @@ import { mailHref, telHref } from "@/lib/utils";
  *
  * TODO: aanleveren door klant (algemene voorwaarden, als tekst of pdf)
  */
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/algemene-voorwaarden/",
   title: "Algemene voorwaarden",
   description: `De algemene voorwaarden van ${site.name}.`,
   robots: { index: false, follow: true },
-};
+});
 
 export default function TermsPage() {
   const { contact } = site;

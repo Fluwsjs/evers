@@ -8,26 +8,32 @@ import { CtaBand } from "@/components/sections/CtaBand";
 import { FaqList } from "@/components/sections/FaqAccordion";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { faqJsonLd } from "@/lib/structured-data";
 import { isCalculatorVisible } from "@/lib/pricing/price-list";
 import { getActiveServices, serviceHref } from "@/lib/site";
 import { inSentence } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/veelgestelde-vragen/",
   title: "Veelgestelde vragen over dakwerk",
   description: `Antwoorden op veelgestelde vragen over dakrenovatie, platte daken, schoorstenen, lood- en zinkwerk en dakramen, en over werken met ${site.shortName}.`,
-};
+});
 
-/** Alle vragen op één pagina: eerst de algemene, daarna per dienst. De FAQPage-structured data volgt in fase 9. */
+/** Alle vragen op één pagina: eerst de algemene, daarna per dienst. */
 export default function FaqPage() {
   const groups = getActiveServices().map((service) => ({
     service,
     items: getServiceDetail(service.slug).faq,
   }));
+  const general = generalFaq.filter((item) => item.requires !== "calculator" || isCalculatorVisible());
 
   return (
     <>
       <Breadcrumbs items={[{ label: "Veelgestelde vragen" }]} />
+      <JsonLd data={faqJsonLd([...general, ...groups.flatMap((group) => group.items)])} />
       <PageHeader
         title="Veelgestelde vragen"
         intro="Hier vindt u antwoorden op vragen die vaak gesteld worden. Eerst de algemene vragen, daarna per soort werk."
@@ -59,7 +65,7 @@ export default function FaqPage() {
             <h2 id="algemeen-titel" className="mb-6 text-2xl md:text-3xl">
               Algemeen
             </h2>
-            <FaqList items={generalFaq.filter((item) => item.requires !== "calculator" || isCalculatorVisible())} />
+            <FaqList items={general} />
           </section>
 
           {groups.map(({ service, items }) => (

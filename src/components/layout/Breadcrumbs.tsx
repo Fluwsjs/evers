@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Container } from "@/components/ui/Container";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export interface Crumb {
   label: string;
@@ -9,13 +11,14 @@ export interface Crumb {
 
 /**
  * Kruimelpad voor subpagina's. "Home" wordt automatisch vooraan gezet.
- * De bijbehorende BreadcrumbList (JSON-LD) volgt in fase 9.
+ * Zet ook de bijbehorende BreadcrumbList (JSON-LD) in de pagina.
  */
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
   const crumbs: Crumb[] = [{ label: "Home", href: "/" }, ...items];
 
   return (
     <nav aria-label="Kruimelpad" className="border-b border-line bg-sand text-sm">
+      <JsonLd data={breadcrumbJsonLd(crumbs)} />
       <Container>
         <ol className="flex flex-wrap items-center gap-x-2 py-3">
           {crumbs.map((crumb, index) => {

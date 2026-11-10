@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "og": "tsx scripts/generate-og.ts"
   },
   "dependencies": {
     "next": "^16.4.6",

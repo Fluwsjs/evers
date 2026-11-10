@@ -14,11 +14,13 @@ import { Icon } from "@/components/ui/Icon";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getActivePlaces, routes } from "@/lib/site";
 import { mailHref, telHref, whatsappHref } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/contact/",
   title: "Contact",
   description: `Neem contact op met ${site.name}: bel ${site.contact.phoneDisplay}, stuur een bericht of laat u terugbellen. Bij spoed kunt u het beste direct bellen.`,
-};
+});
 
 export default function ContactPage() {
   const { address, contact, emergency, features, openingHours, registration } = site;

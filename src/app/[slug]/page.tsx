@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { getActivePlaces, getActiveServices, placeHref, routes } from "@/lib/site";
 import { telHref } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
 /**
  * Plaatsnaampagina's: /dakdekker-[plaats]/.
@@ -40,10 +41,12 @@ type PageProps = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const place = findPlace((await params).slug);
   if (!place) return {};
-  return {
+  return pageMetadata({
+    path: placeHref(place.slug),
     title: `Dakdekker ${place.name}`,
     description: place.metaDescription,
-  };
+    image: `plaats-${place.slug}`,
+  });
 }
 
 export default async function PlacePage({ params }: PageProps) {

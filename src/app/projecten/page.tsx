@@ -7,11 +7,13 @@ import { ProjectCard } from "@/components/sections/ProjectCard";
 import { ProjectFilter } from "@/components/sections/ProjectFilter";
 import { Container } from "@/components/ui/Container";
 import { formatList, getActiveServices } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/projecten/",
   title: "Projecten: dakrenovatie en nieuwbouw",
   description: `Bekijk daken die ${site.shortName} heeft gemaakt: ${formatList(projects.map((project) => project.title))}. Met foto's van het werk.`,
-};
+});
 
 export default function ProjectsPage() {
   // Alleen diensten waar minstens één project bij hoort komen in het filter.

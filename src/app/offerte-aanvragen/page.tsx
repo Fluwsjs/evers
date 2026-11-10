@@ -9,11 +9,13 @@ import { Icon } from "@/components/ui/Icon";
 import { getPriceList } from "@/lib/pricing/price-list";
 import { getServiceGroups, routes } from "@/lib/site";
 import { telHref, whatsappHref } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/offerte-aanvragen/",
   title: "Offerte aanvragen",
   description: `Vraag in drie stappen een vrijblijvende offerte aan bij ${site.name}. Stuur foto's van uw dak mee voor een snelle en goede inschatting.`,
-};
+});
 
 export default function QuotePage() {
   const { contact, features } = site;

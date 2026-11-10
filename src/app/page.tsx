@@ -14,13 +14,16 @@ import { Reviews } from "@/components/sections/Reviews";
 import { ServiceArea } from "@/components/sections/ServiceArea";
 import { ServiceCards } from "@/components/sections/ServiceCards";
 import { isCalculatorVisible } from "@/lib/pricing/price-list";
+import { pageMetadata } from "@/lib/seo";
+import { faqJsonLd, websiteJsonLd } from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 
-// Canonical, Open Graph en structured data volgen in fase 9.
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/",
   title: { absolute: `Dakdekker voor dakrenovatie en nieuwbouw | ${site.shortName}` },
   description:
     `${site.name}: dakrenovatie, platte daken, schoorsteenrenovatie, lood- en zinkwerk, timmerwerk en VELUX dakramen. VCA-gecertificeerd. Vraag een vrijblijvende offerte aan.`,
-};
+});
 
 /**
  * Homepage. De volgorde volgt de vragen van een bezoeker: wat doet u, kunt u dat laten
@@ -34,6 +37,8 @@ export default function HomePage() {
 
   return (
     <>
+      <JsonLd data={websiteJsonLd()} />
+      <JsonLd data={faqJsonLd(faq)} />
       <Hero />
       <BrandBar />
       <KeyFigures />

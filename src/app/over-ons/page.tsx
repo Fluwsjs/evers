@@ -13,11 +13,13 @@ import { Icon } from "@/components/ui/Icon";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { getActiveServices } from "@/lib/site";
 import { inSentence } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/over-ons/",
   title: "Over ons",
   description: `Maak kennis met ${site.name}: dakdekkers voor renovatie en nieuwbouw. VCA-gecertificeerd, met garantie op het werk. Lees hoe wij werken.`,
-};
+});
 
 /** Wat op de huidige site onder "Waar staan wij voor?" staat, concreter gemaakt. */
 const principles = [
