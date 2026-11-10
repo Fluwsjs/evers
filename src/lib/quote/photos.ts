@@ -39,6 +39,83 @@ export function validatePhotos(photos: PhotoLike[]): string | null {
   return null;
 }
 
+/**
+ * Verkleinen in de browser (zie photos.client.ts): elke stap is kleiner dan de vorige.
+ * De eerste stap die onder het doel uitkomt wordt gebruikt.
+ */
+export const SHRINK_STEPS = [
+  { maxSide: 1920, quality: 0.82 },
+  { maxSide: 1600, quality: 0.78 },
+  { maxSide: 1280, quality: 0.72 },
+  { maxSide: 1024, quality: 0.68 },
+] as const;
+
+/** Doel per foto: het maximale aantal foto's past dan samen binnen de verzendlimiet. */
+export const SHRINK_TARGET_BYTES = 750 * 1024;
+
+/** Nieuwe maten waarbij de langste zijde hooguit `maxSide` is. Vergroot nooit. */
+export function scaleToFit(width: number, height: number, maxSide: number): { width: number; height: number } {
+  const longest = Math.max(width, height);
+  if (longest <= maxSide) return { width, height };
+  const factor = maxSide / longest;
+  return { width: Math.max(1, Math.round(width * factor)), height: Math.max(1, Math.round(height * factor)) };
+}
+
+/** "IMG_0001.HEIC" → "IMG_0001.jpg": een verkleinde foto is altijd een jpeg. */
+export function shrunkName(filename: string): string {
+  const dot = filename.lastIndexOf(".");
+  return `${dot <= 0 ? filename : filename.slice(0, dot)}.jpg`;
+}
+
+export function totalBytes(photos: PhotoLike[]): number {
+  return photos.reduce((sum, photo) => sum + photo.size, 0);
+}
+
+export interface NamedPhoto extends PhotoLike {
+  /** De browser kon deze foto niet lezen en dus niet verkleinen. */
+  unreadable?: boolean;
+}
+
+/**
+ * Verdeelt nieuw gekozen foto's in wat nog binnen de verzendlimiet past en wat niet.
+ * De volgorde blijft die waarin de bezoeker de foto's koos.
+ */
+export function fitWithinUploadLimit<T extends NamedPhoto>(
+  existing: PhotoLike[],
+  added: T[],
+): { accepted: T[]; rejected: T[] } {
+  let total = totalBytes(existing);
+  const accepted: T[] = [];
+  const rejected: T[] = [];
+  for (const photo of added) {
+    if (total + photo.size <= photoLimits.maxTotalUploadBytes) {
+      total += photo.size;
+      accepted.push(photo);
+    } else {
+      rejected.push(photo);
+    }
+  }
+  return { accepted, rejected };
+}
+
+/** Melding voor foto's die niet meer binnen de verzendlimiet passen. `null` als alles past. */
+export function uploadLimitMessage(rejected: NamedPhoto[]): string | null {
+  const first = rejected[0];
+  if (!first) return null;
+  const others = rejected.length > 1 ? ` Dat geldt ook voor ${rejected.length - 1} andere foto${rejected.length > 2 ? "'s" : ""}.` : "";
+  const reason = first.unreadable
+    ? `"${first.name}" kon in deze browser niet worden verkleind en is te groot om mee te sturen (${formatBytes(first.size)}). Kies een jpg-foto.`
+    : `"${first.name}" past er niet meer bij: samen mogen de foto's maximaal ${formatBytes(photoLimits.maxTotalUploadBytes)} zijn.`;
+  return `${reason}${others} U kunt foto's ook nasturen per e-mail.`;
+}
+
+/** Laatste controle vlak voor het verzenden. `null` als de foto's samen binnen de limiet blijven. */
+export function validateUploadTotal(photos: PhotoLike[]): string | null {
+  const total = totalBytes(photos);
+  if (total <= photoLimits.maxTotalUploadBytes) return null;
+  return `De foto's zijn samen te groot om te verzenden (${formatBytes(total)}, maximaal ${formatBytes(photoLimits.maxTotalUploadBytes)}). Haal een foto weg.`;
+}
+
 export type PhotoKind = "jpeg" | "png" | "webp" | "heic";
 
 /**

@@ -35,6 +35,11 @@ export const quoteParams = {
 export const photoLimits = {
   maxFiles: 5,
   maxBytes: 10 * 1024 * 1024,
+  /**
+   * Zoveel mogen de foto's samen zijn op het moment van verzenden, dus ná het verkleinen
+   * in de browser. Hostingplatforms als Netlify weigeren een verzoek boven ±4,5 MB.
+   */
+  maxTotalUploadBytes: 4 * 1024 * 1024,
   extensions: ["jpg", "jpeg", "png", "webp", "heic", "heif"],
   /** Voor het `accept`-attribuut van het bestandsveld. */
   accept: "image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif",

@@ -18,7 +18,8 @@ import { calculateEstimate } from "@/lib/pricing/calculate";
 import { formatEuro, formatQuantity } from "@/lib/pricing/format";
 import { decodeSelection, ESTIMATE_PARAM } from "@/lib/pricing/selection";
 import type { PriceListItem, SelectionEntry } from "@/lib/pricing/types";
-import { formatBytes, validatePhotos } from "@/lib/quote/photos";
+import { fitWithinUploadLimit, formatBytes, uploadLimitMessage, validatePhotos, validateUploadTotal } from "@/lib/quote/photos";
+import { shrinkPhoto } from "@/lib/quote/photos.client";
 import { quoteFormSchema, stepSchemas, toFieldErrors, type FieldErrors } from "@/lib/quote/schema";
 import { cn } from "@/lib/utils";
 import {
@@ -139,6 +140,8 @@ export function QuoteForm({
   // Is stap 1 al volledig ingevuld op de homepage, dan begint het formulier bij stap 2.
   const [step, setStep] = useState(() => (values.services.length > 0 && values.roofType !== "" ? 1 : 0));
   const [photos, setPhotos] = useState<File[]>([]);
+  // Foto's worden na het kiezen in de browser verkleind; tot dat klaar is kan er niets verzonden worden.
+  const [shrinking, setShrinking] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -201,7 +204,7 @@ export function QuoteForm({
     const result = schema.safeParse(values);
     const fieldErrors: FieldErrors = result.success ? {} : toFieldErrors(result.error);
     if (index === 1) {
-      const photoError = validatePhotos(photos);
+      const photoError = validatePhotos(photos) ?? validateUploadTotal(photos);
       if (photoError) fieldErrors.photos = photoError;
     }
     if (Object.keys(fieldErrors).length > 0) {
@@ -254,19 +257,32 @@ export function QuoteForm({
     }
   };
 
-  const addPhotos = (files: FileList | null) => {
+  const addPhotos = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const merged = [...photos, ...Array.from(files)];
-    const error = validatePhotos(merged);
+    const picked = Array.from(files);
+    const error = validatePhotos([...photos, ...picked]);
     if (error) {
       setErrors((current) => ({ ...current, photos: error }));
       return;
     }
-    setPhotos(merged);
+
+    // Eén voor één verkleinen: een telefoon heeft niet het geheugen om vijf grote foto's tegelijk te openen.
+    // Tijdens het verkleinen zijn de lijst en de knoppen geblokkeerd, dus `photos` verandert niet.
+    setShrinking(true);
+    const results = [];
+    for (const file of picked) {
+      const result = await shrinkPhoto(file);
+      results.push({ name: result.file.name, size: result.file.size, unreadable: result.unreadable, file: result.file });
+    }
+    setShrinking(false);
+
+    const { accepted, rejected } = fitWithinUploadLimit(photos, results);
+    setPhotos([...photos, ...accepted.map((item) => item.file)]);
+    const limitError = uploadLimitMessage(rejected);
     setErrors((current) => {
       const rest = { ...current };
       delete rest.photos;
-      return rest;
+      return limitError ? { ...rest, photos: limitError } : rest;
     });
   };
 
@@ -288,7 +304,7 @@ export function QuoteForm({
     };
     const result = quoteFormSchema.safeParse(payload);
     const fieldErrors: FieldErrors = result.success ? {} : toFieldErrors(result.error);
-    const photoError = validatePhotos(photos);
+    const photoError = validatePhotos(photos) ?? validateUploadTotal(photos);
     if (photoError) fieldErrors.photos = photoError;
     if (turnstileEnabled && !turnstileToken) fieldErrors.turnstile = "Wacht even tot de controle tegen spam klaar is.";
     if (Object.keys(fieldErrors).length > 0) {
@@ -303,7 +319,22 @@ export function QuoteForm({
     setSubmitting(true);
     try {
       const response = await fetch("/api/offerte/", { method: "POST", body });
-      const data = (await response.json()) as { ok: boolean; message?: string; fieldErrors?: FieldErrors; reference?: string };
+      // Het hostingplatform kan een te groot of mislukt verzoek zelf afwijzen; dan komt er geen JSON terug.
+      const data = (await response.json().catch(() => null)) as {
+        ok: boolean;
+        message?: string;
+        fieldErrors?: FieldErrors;
+        reference?: string;
+      } | null;
+      if (!data) {
+        setFormError(
+          response.status === 413
+            ? "De foto's zijn samen te groot om te verzenden. Haal een foto weg en probeer het opnieuw."
+            : "Het verzenden is niet gelukt. Probeer het opnieuw of bel ons.",
+        );
+        setSubmitting(false);
+        return;
+      }
       if (data.ok) {
         router.push(`${thanksHref}?type=offerte${data.reference ? `&ref=${encodeURIComponent(data.reference)}` : ""}`);
         return;
@@ -561,7 +592,8 @@ export function QuoteForm({
             </p>
             <p id="uitleg-photos" className="mb-3 text-sm text-muted">
               Maximaal {photoLimits.maxFiles} foto&apos;s van elk maximaal {formatBytes(photoLimits.maxBytes)} (jpg, png,
-              webp of heic). Foto&apos;s helpen ons om uw aanvraag goed in te schatten.
+              webp of heic). Wij verkleinen ze automatisch voor het verzenden. Foto&apos;s helpen ons om uw aanvraag
+              goed in te schatten.
             </p>
             {photos.length > 0 ? (
               <ul aria-label="Gekozen foto's" className="mb-3 space-y-2">
@@ -573,6 +605,7 @@ export function QuoteForm({
                     <button
                       type="button"
                       onClick={() => setPhotos(photos.filter((_, photoIndex) => photoIndex !== index))}
+                      disabled={shrinking}
                       aria-label={`${photo.name} verwijderen`}
                       className="grid size-9 shrink-0 place-items-center rounded-full hover:bg-sand-200"
                     >
@@ -582,7 +615,11 @@ export function QuoteForm({
                 ))}
               </ul>
             ) : null}
-            {photos.length < photoLimits.maxFiles ? (
+            {shrinking ? (
+              <p role="status" className="rounded-lg border border-dashed border-ink-700/50 bg-sand p-3 font-medium">
+                Bezig met verkleinen van uw foto&apos;s…
+              </p>
+            ) : photos.length < photoLimits.maxFiles ? (
               <input
                 id="veld-photos"
                 type="file"
@@ -702,14 +739,14 @@ export function QuoteForm({
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
         {step > 0 ? (
-          <Button variant="ghost" onClick={back} disabled={submitting}>
+          <Button variant="ghost" onClick={back} disabled={submitting || shrinking}>
             <Icon name="arrow-right" className="rotate-180" />
             Vorige
           </Button>
         ) : (
           <span />
         )}
-        <Button type="submit" size="lg" disabled={submitting}>
+        <Button type="submit" size="lg" disabled={submitting || shrinking}>
           {step < STEPS.length - 1 ? "Volgende stap" : submitting ? "Bezig met verzenden…" : "Aanvraag versturen"}
           {submitting ? null : <Icon name="arrow-right" />}
         </Button>

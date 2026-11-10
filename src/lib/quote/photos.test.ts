@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { detectPhotoKind, fileExtension, formatBytes, validatePhotos } from "./photos";
+import { photoLimits } from "@content/quote-options";
+import {
+  detectPhotoKind,
+  fileExtension,
+  fitWithinUploadLimit,
+  formatBytes,
+  scaleToFit,
+  SHRINK_STEPS,
+  SHRINK_TARGET_BYTES,
+  shrunkName,
+  totalBytes,
+  uploadLimitMessage,
+  validatePhotos,
+  validateUploadTotal,
+} from "./photos";
 
 const MB = 1024 * 1024;
 const photo = (name: string, size = 2 * MB) => ({ name, size });
@@ -62,5 +76,71 @@ describe("hulpfuncties", () => {
     expect(formatBytes(500 * 1024)).toBe("500 kB");
     expect(formatBytes(10 * MB)).toBe("10 MB");
     expect(formatBytes(2.5 * MB)).toBe("2,5 MB");
+  });
+});
+
+describe("verkleinen voor het verzenden", () => {
+  it("laat een foto die al klein genoeg is zoals hij is", () => {
+    expect(scaleToFit(1600, 1200, 1920)).toEqual({ width: 1600, height: 1200 });
+    expect(scaleToFit(1920, 1080, 1920)).toEqual({ width: 1920, height: 1080 });
+  });
+
+  it("verkleint tot de langste zijde past en houdt de verhouding", () => {
+    expect(scaleToFit(4000, 3000, 1920)).toEqual({ width: 1920, height: 1440 });
+    expect(scaleToFit(3000, 4000, 1920)).toEqual({ width: 1440, height: 1920 });
+    expect(scaleToFit(8000, 100, 1920)).toEqual({ width: 1920, height: 24 });
+  });
+
+  it("maakt een maat nooit kleiner dan één pixel", () => {
+    expect(scaleToFit(20000, 2, 1024)).toEqual({ width: 1024, height: 1 });
+  });
+
+  it("elke stap is kleiner dan de vorige", () => {
+    for (let index = 1; index < SHRINK_STEPS.length; index += 1) {
+      expect(SHRINK_STEPS[index]!.maxSide).toBeLessThan(SHRINK_STEPS[index - 1]!.maxSide);
+      expect(SHRINK_STEPS[index]!.quality).toBeLessThan(SHRINK_STEPS[index - 1]!.quality);
+    }
+  });
+
+  it("het maximale aantal verkleinde foto's past samen binnen de verzendlimiet", () => {
+    expect(photoLimits.maxFiles * SHRINK_TARGET_BYTES).toBeLessThanOrEqual(photoLimits.maxTotalUploadBytes);
+  });
+
+  it("geeft een verkleinde foto de extensie jpg", () => {
+    expect(shrunkName("IMG_0001.HEIC")).toBe("IMG_0001.jpg");
+    expect(shrunkName("dak.voor.png")).toBe("dak.voor.jpg");
+    expect(shrunkName("foto")).toBe("foto.jpg");
+    expect(shrunkName(".verborgen")).toBe(".verborgen.jpg");
+  });
+});
+
+describe("verzendlimiet voor alle foto's samen", () => {
+  it("accepteert foto's zolang ze samen binnen de limiet blijven", () => {
+    const { accepted, rejected } = fitWithinUploadLimit([photo("a.jpg", 1 * MB)], [photo("b.jpg", 1 * MB), photo("c.jpg", 2 * MB)]);
+    expect(accepted.map((item) => item.name)).toEqual(["b.jpg", "c.jpg"]);
+    expect(rejected).toEqual([]);
+    expect(uploadLimitMessage(rejected)).toBeNull();
+  });
+
+  it("weigert wat er niet meer bij past, maar neemt kleinere foto's daarna nog wel mee", () => {
+    const { accepted, rejected } = fitWithinUploadLimit(
+      [photo("a.jpg", 3 * MB)],
+      [photo("groot.jpg", 2 * MB), photo("klein.jpg", 0.5 * MB)],
+    );
+    expect(accepted.map((item) => item.name)).toEqual(["klein.jpg"]);
+    expect(rejected.map((item) => item.name)).toEqual(["groot.jpg"]);
+  });
+
+  it("legt uit waarom een foto niet mee kan", () => {
+    expect(uploadLimitMessage([photo("groot.jpg", 3 * MB)])).toMatch(/past er niet meer bij: samen mogen de foto's maximaal 4 MB/);
+    expect(uploadLimitMessage([{ ...photo("IMG_1.heic", 5 * MB), unreadable: true }])).toMatch(/kon in deze browser niet worden verkleind/);
+    expect(uploadLimitMessage([photo("a.jpg", 3 * MB), photo("b.jpg", 3 * MB)])).toMatch(/ook voor 1 andere foto\./);
+    expect(uploadLimitMessage([photo("a.jpg", 3 * MB), photo("b.jpg", 3 * MB), photo("c.jpg", 3 * MB)])).toMatch(/2 andere foto's/);
+  });
+
+  it("controleert het totaal vlak voor het verzenden", () => {
+    expect(validateUploadTotal([photo("a.jpg", 2 * MB), photo("b.jpg", 2 * MB)])).toBeNull();
+    expect(validateUploadTotal([photo("a.jpg", 2 * MB), photo("b.jpg", 2 * MB + 1)])).toMatch(/samen te groot/);
+    expect(totalBytes([photo("a.jpg", 10), photo("b.jpg", 5)])).toBe(15);
   });
 });
