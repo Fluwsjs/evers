@@ -9,6 +9,7 @@ import { FaqList } from "@/components/sections/FaqAccordion";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { isCalculatorVisible } from "@/lib/pricing/price-list";
 import { getActiveServices, serviceHref } from "@/lib/site";
 import { inSentence } from "@/lib/utils";
 
@@ -58,7 +59,7 @@ export default function FaqPage() {
             <h2 id="algemeen-titel" className="mb-6 text-2xl md:text-3xl">
               Algemeen
             </h2>
-            <FaqList items={generalFaq} />
+            <FaqList items={generalFaq.filter((item) => item.requires !== "calculator" || isCalculatorVisible())} />
           </section>
 
           {groups.map(({ service, items }) => (

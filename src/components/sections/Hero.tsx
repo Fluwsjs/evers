@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { GoogleScore } from "@/components/ui/GoogleScore";
 import { Icon } from "@/components/ui/Icon";
+import { routes } from "@/lib/site";
 import { telHref } from "@/lib/utils";
 import { QuoteStarter } from "./QuoteStarter";
 
@@ -13,6 +14,9 @@ export const QUOTE_START_ID = "offerte";
 /**
  * Hero van de homepage: een echte werkfoto over de volle breedte, met links de belofte,
  * USP's en bellen, en rechts stap 1 van het offerteformulier als kaart.
+ *
+ * Op mobiel blijft de kaart weg: de hero zou anders ruim twee schermen hoog zijn, en de
+ * knop hier en de vaste actiebalk onderaan leiden al naar het offerteformulier.
  *
  * De foto is hier achtergrond (lege alt); een donker verloop eroverheen houdt de tekst
  * leesbaar, ook waar de foto licht is.
@@ -44,12 +48,6 @@ export function Hero() {
 
       <Container className="grid gap-10 py-12 md:py-16 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14 lg:py-14 xl:gap-20">
         <div>
-          <p className="mb-5 inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 py-1.5 pr-4 pl-1.5 text-sm font-semibold text-white backdrop-blur-sm">
-            <span className="rounded-full bg-brand px-2.5 py-0.5 text-xs font-bold tracking-wide text-ink uppercase">
-              Dakdekker
-            </span>
-            {site.shortName}
-          </p>
           <h1 id="hero-titel" className="text-4xl text-white sm:text-5xl xl:text-6xl">
             Dakdekker{region} voor dakrenovatie <span className="text-brand">en nieuwbouw</span>
           </h1>
@@ -74,7 +72,12 @@ export function Hero() {
               <Icon name="phone" />
               Bel {contact.phoneDisplay}
             </ButtonLink>
-            <ButtonLink href={`#${QUOTE_START_ID}`} variant="outline-on-dark" size="lg" className="lg:hidden">
+            {/* Mobiel: naar het formulier. Tablet: naar de kaart hieronder. Desktop: de kaart staat ernaast. */}
+            <ButtonLink href={routes.quote} variant="outline-on-dark" size="lg" className="md:hidden">
+              Offerte aanvragen
+              <Icon name="arrow-right" />
+            </ButtonLink>
+            <ButtonLink href={`#${QUOTE_START_ID}`} variant="outline-on-dark" size="lg" className="max-md:hidden lg:hidden">
               Offerte aanvragen
               <Icon name="arrow-right" />
             </ButtonLink>
@@ -83,7 +86,7 @@ export function Hero() {
           <GoogleScore className="mt-6 font-medium text-white" />
         </div>
 
-        <div id={QUOTE_START_ID} className="scroll-mt-28">
+        <div id={QUOTE_START_ID} className="scroll-mt-28 max-md:hidden">
           <QuoteStarter />
         </div>
       </Container>

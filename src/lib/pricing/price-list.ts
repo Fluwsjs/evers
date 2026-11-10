@@ -59,6 +59,11 @@ export function hasVisiblePrices(): boolean {
   return getPriceList().some((item) => item.unitPrice !== null);
 }
 
+/** Is de calculator te zien? Alleen als hij aan staat en er prijzen zijn om mee te rekenen. */
+export function isCalculatorVisible(): boolean {
+  return site.features.calculator && hasVisiblePrices();
+}
+
 export interface FromPrice {
   amount: number;
   unit: PriceUnit;

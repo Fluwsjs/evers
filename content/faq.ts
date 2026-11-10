@@ -3,6 +3,8 @@ export interface FaqItem {
   answer: string;
   /** Leeg = algemene vraag. Gevuld = hoort bij die dienst. */
   serviceSlug?: string;
+  /** Alleen tonen als dit onderdeel op de site zichtbaar is. */
+  requires?: "calculator";
 }
 
 /**
@@ -39,6 +41,7 @@ export const generalFaq: FaqItem[] = [
       "VCA staat voor Veiligheid, Gezondheid en Milieu Checklist Aannemers. Het certificaat laat zien dat wij aantoonbaar veilig werken: op hoogte, met de juiste beschermingsmiddelen en met oog voor de omgeving.",
   },
   {
+    requires: "calculator",
     question: "Is de prijs uit de calculator de definitieve prijs?",
     answer:
       "Nee, de calculator geeft een indicatie op basis van vanaf-prijzen. De definitieve prijs hangt af van de staat van uw dak, de bereikbaarheid en de materiaalkeuze, en volgt na een inspectie in de offerte.",
