@@ -35,9 +35,9 @@ export default function ServicesPage() {
             </p>
             <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-2">
               {site.usps.map((usp) => (
-                <li key={usp} className="flex items-center gap-3 font-medium">
+                <li key={usp.text} className="flex items-center gap-3 font-medium">
                   <Icon name="check" className="text-brand-strong" />
-                  {usp}
+                  {usp.text}
                 </li>
               ))}
             </ul>

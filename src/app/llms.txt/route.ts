@@ -21,7 +21,7 @@ export function GET() {
   const lines = [
     `# ${site.name}`,
     "",
-    `> ${site.name} is een dakdekkersbedrijf voor renovatie en nieuwbouw. Diensten: ${formatList(services.map((service) => inSentence(service.title)))}. ${site.usps.join(". ")}.`,
+    `> ${site.name} is een dakdekkersbedrijf voor renovatie en nieuwbouw. Diensten: ${formatList(services.map((service) => inSentence(service.title)))}. ${site.usps.map((usp) => usp.text).join(". ")}.`,
     "",
     "## Contact",
     "",

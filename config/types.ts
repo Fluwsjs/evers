@@ -69,6 +69,14 @@ export interface PriceItem {
   confirmed: boolean;
 }
 
+/** Iconen die bij een pluspunt gekozen kunnen worden (zie src/components/ui/Icon.tsx). */
+export type UspIcon = "document" | "badge" | "shield" | "home" | "clock" | "phone" | "pin" | "check";
+
+export interface Usp {
+  text: string;
+  icon: UspIcon;
+}
+
 export interface SiteConfig {
   name: string;
   shortName: string;
@@ -124,7 +132,7 @@ export interface SiteConfig {
   /** `null` = geen score tonen en geen aggregateRating in structured data. */
   googleReviews: GoogleReviews | null;
 
-  usps: string[];
+  usps: Usp[];
   /** Alleen echte cijfers. Leeg = sectie wordt niet getoond. */
   keyFigures: KeyFigure[];
   brands: Brand[];

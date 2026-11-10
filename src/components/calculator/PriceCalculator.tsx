@@ -217,7 +217,7 @@ export function PriceCalculator({ groups, vatRate, quoteHref }: PriceCalculatorP
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "grid size-7 shrink-0 place-items-center rounded-full border-2 transition-colors",
+                          "grid size-7 shrink-0 place-items-center rounded-lg border-2 transition-colors",
                           isChecked ? "border-brand bg-brand text-ink" : "border-ink-700/30 bg-white text-transparent",
                         )}
                       >

@@ -60,10 +60,10 @@ export const site: SiteConfig = {
 
   // Alleen wat op de huidige site staat. Aanvullen na overleg met de klant.
   usps: [
-    "Vrijblijvende offerte",
-    "VCA-gecertificeerd",
-    "Garantie op onze werkzaamheden",
-    "Renovatie én nieuwbouw",
+    { text: "Vrijblijvende offerte", icon: "document" },
+    { text: "VCA-gecertificeerd", icon: "badge" },
+    { text: "Garantie op onze werkzaamheden", icon: "shield" },
+    { text: "Renovatie én nieuwbouw", icon: "home" },
   ],
 
   keyFigures: [], // TODO: aanleveren door klant (jaren ervaring, aantal projecten: alleen echte cijfers)
