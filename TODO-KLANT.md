@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 6. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 7. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)
@@ -70,3 +70,11 @@ Per project (Nieuwbouw Zutphen, Nieuwbouw Schuytgraaf Arnhem, Dakrenovatie Elst)
 - [ ] Cloudflare Turnstile-sleutels (gratis Cloudflare-account) voor de spambeveiliging
 - [ ] Reactietijd na een aanvraag, voor de bedankpagina en de bevestigingsmail
 - [ ] Tekst van de bevestigingsmail laten nalezen (`src/lib/mail/templates.ts`)
+
+## Overige pagina's
+
+- [ ] Over ons: het verhaal van de eigenaar en het team (de sectie verschijnt zodra de naam van de eigenaar in de config staat)
+- [ ] Over ons: de drie uitgangspunten onder "Zo werken wij" laten nalezen
+- [ ] Plaatsnaampagina's (Elst, Zutphen, Arnhem): teksten laten nalezen en aanvullen met eigen ervaring per plaats (`content/places.ts`)
+- [ ] Privacyverklaring laten controleren door de klant of een jurist; bewaartermijn voor aanvragen vaststellen; hostingpartij en mailprovider invullen
+- [ ] Algemene voorwaarden aanleveren (tekst of pdf). Tot dan verwijst de pagina naar opvragen per telefoon of mail en wordt ze niet geïndexeerd.

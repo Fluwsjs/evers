@@ -27,12 +27,14 @@ export interface QuoteRequest {
     city: string;
   } | null;
 
+  /** Omschrijving van de klus, of het bericht uit het contactformulier. */
   description: string | null;
   photos: QuotePhoto[];
 
   contact: {
     name: string;
-    phone: string;
+    /** Alleen bij het contactformulier optioneel. */
+    phone: string | null;
     email: string | null;
     preferredMoment: ContactMoment;
   };

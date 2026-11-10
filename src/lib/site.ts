@@ -1,6 +1,6 @@
 import { site } from "@config/site";
 import type { ServiceCategory } from "@config/types";
-import { places, type PlaceSummary } from "@content/places";
+import { places, type Place } from "@content/places";
 import { projects, type Project } from "@content/projects";
 import { quoteParams } from "@content/quote-options";
 import { services, type ServiceSummary } from "@content/services";
@@ -65,10 +65,10 @@ export function placeHref(slug: string): string {
 }
 
 /** Plaatsen met een eigen pagina, in de volgorde van `site.serviceArea.places`. */
-export function getActivePlaces(): PlaceSummary[] {
+export function getActivePlaces(): Place[] {
   return site.serviceArea.places
     .map((slug) => places.find((place) => place.slug === slug))
-    .filter((place): place is PlaceSummary => place !== undefined);
+    .filter((place): place is Place => place !== undefined);
 }
 
 /** "Elst, Zutphen en Arnhem" */

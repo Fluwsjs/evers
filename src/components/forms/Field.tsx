@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode } from "react";
+import { useId, type ComponentProps, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /** Gedeelde opmaak voor formuliervelden en keuzeblokken. */
@@ -39,7 +39,10 @@ export function FieldHint({ name, children }: { name: string; children: ReactNod
 }
 
 interface BaseFieldProps {
+  /** Bepaalt de id van het veld en van de bijbehorende uitleg en foutmelding. */
   name: string;
+  /** De `name` waarmee het veld wordt verzonden, als die afwijkt van `name` (bij een voorvoegsel in de id). */
+  submitName?: string;
   label: string;
   error?: string;
   hint?: ReactNode;
@@ -59,13 +62,13 @@ function FieldLabel({ name, label, optional }: Pick<BaseFieldProps, "name" | "la
 
 type TextFieldProps = BaseFieldProps & Omit<ComponentProps<"input">, "name" | "id" | "className">;
 
-export function TextField({ name, label, error, hint, optional, className, ...inputProps }: TextFieldProps) {
+export function TextField({ name, submitName, label, error, hint, optional, className, ...inputProps }: TextFieldProps) {
   return (
     <div className={className}>
       <FieldLabel name={name} label={label} optional={optional} />
       <input
         id={fieldId(name)}
-        name={name}
+        name={submitName ?? name}
         required={!optional}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(name, Boolean(hint), Boolean(error))}
@@ -80,13 +83,22 @@ export function TextField({ name, label, error, hint, optional, className, ...in
 
 type TextAreaFieldProps = BaseFieldProps & Omit<ComponentProps<"textarea">, "name" | "id" | "className">;
 
-export function TextAreaField({ name, label, error, hint, optional, className, ...textareaProps }: TextAreaFieldProps) {
+export function TextAreaField({
+  name,
+  submitName,
+  label,
+  error,
+  hint,
+  optional,
+  className,
+  ...textareaProps
+}: TextAreaFieldProps) {
   return (
     <div className={className}>
       <FieldLabel name={name} label={label} optional={optional} />
       <textarea
         id={fieldId(name)}
-        name={name}
+        name={submitName ?? name}
         required={!optional}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(name, Boolean(hint), Boolean(error))}
@@ -104,11 +116,13 @@ export function TextAreaField({ name, label, error, hint, optional, className, .
  * Bots vullen het wel in, waarna de server de aanvraag stil negeert.
  */
 export function Honeypot({ value, onChange }: { value?: string; onChange?: (value: string) => void }) {
+  // Eigen id per formulier: er kunnen meerdere formulieren op één pagina staan.
+  const id = useId();
   return (
     <div aria-hidden="true" className="absolute -left-[9999px] size-px overflow-hidden">
-      <label htmlFor="veld-website">Website (niet invullen)</label>
+      <label htmlFor={id}>Website (niet invullen)</label>
       <input
-        id="veld-website"
+        id={id}
         name="website"
         type="text"
         tabIndex={-1}

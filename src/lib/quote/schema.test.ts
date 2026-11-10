@@ -161,3 +161,26 @@ describe("terugbelformulier", () => {
     expect(errors.phone).toMatch(/geldig telefoonnummer/);
   });
 });
+
+describe("contactformulier", () => {
+  const validContact = { name: "J. de Vries", email: "naam@voorbeeld.nl", message: "Ik heb een vraag over mijn dakgoot." };
+
+  it("accepteert een bericht zonder telefoonnummer", async () => {
+    const { contactFormSchema } = await import("./schema");
+    expect(contactFormSchema.safeParse(validContact).success).toBe(true);
+    expect(contactFormSchema.safeParse({ ...validContact, phone: "" }).success).toBe(true);
+  });
+
+  it("controleert een ingevuld telefoonnummer wel", async () => {
+    const { contactFormSchema } = await import("./schema");
+    expect(errorsFor(contactFormSchema, { ...validContact, phone: "123" }).phone).toMatch(/geldig telefoonnummer/);
+    expect(contactFormSchema.safeParse({ ...validContact, phone: "06 12 34 56 78" }).success).toBe(true);
+  });
+
+  it("vraagt om een e-mailadres en een bericht van minimaal 10 tekens", async () => {
+    const { contactFormSchema } = await import("./schema");
+    const errors = errorsFor(contactFormSchema, { ...validContact, email: "", message: "Hallo" });
+    expect(errors.email).toBe("Vul uw e-mailadres in.");
+    expect(errors.message).toMatch(/minimaal 10 tekens/);
+  });
+});

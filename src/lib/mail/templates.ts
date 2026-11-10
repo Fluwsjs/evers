@@ -41,12 +41,12 @@ function requestRows(request: QuoteRequest): Row[] {
   const rows: Row[] = [];
   if (request.services.length > 0) rows.push(["Diensten", request.services.map(serviceLabel).join(", ")]);
   if (request.roofType) rows.push(["Type dak", roofTypeLabel(request.roofType)]);
-  if (request.source !== "terugbel") rows.push(["Spoed", request.urgent ? "Ja" : "Nee"]);
+  if (request.source === "offerte" || request.source === "calculator") rows.push(["Spoed", request.urgent ? "Ja" : "Nee"]);
   if (request.address) {
     const { street, houseNumber, postcode, city } = request.address;
     rows.push(["Adres", `${street ? `${street} ` : ""}${houseNumber}, ${postcode} ${city}`]);
   }
-  if (request.description) rows.push(["Omschrijving", request.description]);
+  if (request.description) rows.push([request.source === "contact" ? "Bericht" : "Omschrijving", request.description]);
   if (request.estimate) {
     rows.push([
       "Indicatie calculator",
@@ -62,12 +62,10 @@ function requestRows(request: QuoteRequest): Row[] {
 }
 
 function contactRows(request: QuoteRequest): Row[] {
-  const rows: Row[] = [
-    ["Naam", request.contact.name],
-    ["Telefoon", request.contact.phone],
-  ];
+  const rows: Row[] = [["Naam", request.contact.name]];
+  if (request.contact.phone) rows.push(["Telefoon", request.contact.phone]);
   if (request.contact.email) rows.push(["E-mail", request.contact.email]);
-  rows.push(["Voorkeur contactmoment", momentLabel(request.contact.preferredMoment)]);
+  if (request.source !== "contact") rows.push(["Voorkeur contactmoment", momentLabel(request.contact.preferredMoment)]);
   return rows;
 }
 
@@ -108,8 +106,9 @@ export interface RenderedMail {
 
 /** Mail naar het bedrijf met alle gegevens. De foto's gaan mee als bijlage. */
 export function companyMail(request: QuoteRequest, omittedPhotos: string[] = []): RenderedMail {
-  const isCallback = request.source === "terugbel";
-  const kind = isCallback ? "Terugbelverzoek" : "Offerteaanvraag";
+  const isCallback = request.source !== "offerte" && request.source !== "calculator";
+  const kind =
+    request.source === "terugbel" ? "Terugbelverzoek" : request.source === "contact" ? "Bericht via contactformulier" : "Offerteaanvraag";
   const where = request.address ? ` – ${request.address.city}` : "";
   // Geen regeleinden in het onderwerp: die horen niet in een mailheader.
   const subject = `${request.urgent ? "[SPOED] " : ""}${kind} ${request.id}: ${request.contact.name}${where}`.replace(
@@ -163,19 +162,21 @@ export function companyMail(request: QuoteRequest, omittedPhotos: string[] = [])
 
 /** Bevestiging naar de klant, met een samenvatting van wat is verzonden. */
 export function confirmationMail(request: QuoteRequest): RenderedMail {
-  const subject = `Wij hebben uw aanvraag ontvangen (${request.id})`;
+  const isMessage = request.source === "contact";
+  const subject = `Wij hebben uw ${isMessage ? "bericht" : "aanvraag"} ontvangen (${request.id})`;
   const { contact } = site;
+  const received = isMessage
+    ? "Wij hebben uw bericht in goede orde ontvangen en nemen contact met u op."
+    : "Wij hebben uw aanvraag in goede orde ontvangen. Wij nemen contact met u op om uw situatie te bespreken en zo nodig een afspraak te maken om uw dak te bekijken.";
 
   const html = layout(
     subject,
     [
-      h1("Bedankt voor uw aanvraag"),
+      h1(request.source === "contact" ? "Bedankt voor uw bericht" : "Bedankt voor uw aanvraag"),
       p(`Beste ${escapeHtml(request.contact.name)},`),
-      p(
-        "Wij hebben uw aanvraag in goede orde ontvangen. Wij nemen contact met u op om uw situatie te bespreken en zo nodig een afspraak te maken om uw dak te bekijken.",
-      ),
+      p(received),
       p(`Uw referentienummer is <strong>${escapeHtml(request.id)}</strong>.`),
-      h2("Uw aanvraag"),
+      h2(isMessage ? "Uw bericht" : "Uw aanvraag"),
       table([...requestRows(request), ...(request.photos.length > 0 ? ([["Foto's", `${request.photos.length} meegestuurd`]] as Row[]) : [])]),
       h2("Uw gegevens"),
       table(contactRows(request)),
@@ -191,15 +192,15 @@ export function confirmationMail(request: QuoteRequest): RenderedMail {
   );
 
   const text = [
-    "Bedankt voor uw aanvraag",
+    isMessage ? "Bedankt voor uw bericht" : "Bedankt voor uw aanvraag",
     "",
     `Beste ${request.contact.name},`,
     "",
-    "Wij hebben uw aanvraag in goede orde ontvangen. Wij nemen contact met u op om uw situatie te bespreken en zo nodig een afspraak te maken om uw dak te bekijken.",
+    received,
     "",
     `Uw referentienummer is ${request.id}.`,
     "",
-    "UW AANVRAAG",
+    isMessage ? "UW BERICHT" : "UW AANVRAAG",
     textRows(requestRows(request)),
     "",
     "UW GEGEVENS",

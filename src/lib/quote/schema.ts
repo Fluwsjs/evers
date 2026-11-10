@@ -110,6 +110,28 @@ export const callbackFormSchema = z.object({
   ...spamFields,
 });
 
+export const contactFormSchema = z.object({
+  name,
+  email: z
+    .string()
+    .trim()
+    .min(1, "Vul uw e-mailadres in.")
+    .max(254, "Uw e-mailadres is te lang.")
+    .pipe(z.email("Vul een geldig e-mailadres in, bijvoorbeeld naam@voorbeeld.nl.")),
+  // Optioneel: een leeg veld is goed, een ingevuld veld moet een geldig nummer zijn.
+  phone: z
+    .string()
+    .trim()
+    .refine((value) => value === "" || isValidPhone(value), "Vul een geldig telefoonnummer in, of laat het veld leeg.")
+    .optional(),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Schrijf een bericht van minimaal 10 tekens.")
+    .max(3000, "Uw bericht is te lang (maximaal 3000 tekens)."),
+  ...spamFields,
+});
+
 export type QuoteFormValues = z.infer<typeof quoteFormSchema>;
 export type CallbackFormValues = z.infer<typeof callbackFormSchema>;
 
