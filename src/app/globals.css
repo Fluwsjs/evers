@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens.
+ * De merkkleuren zijn gemeten in het Evers-logo: zwart (#000) en oranje (#FE5D14).
+ *
+ * Contrast (WCAG 2.2 AA):
+ *   ink op wit          ±18:1    lopende tekst en koppen
+ *   muted op wit         ±6,7:1  bijtekst
+ *   brand op wit         ±3,1:1  NIET voor tekst; alleen accenten, iconen en vlakken
+ *   ink op brand         ±6,0:1  knop: donkere tekst op oranje
+ *   wit op brand-strong  ±5,2:1  witte tekst op donker oranje
+ *   brand-strong op wit  ±5,2:1  tekstlinks
+ *   brand op ink         ±6,0:1  accenten op donkere vlakken
+ */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme {
+  --color-ink: #14120f;
+  --color-ink-800: #211e1a;
+  --color-ink-700: #35312c;
+  --color-muted: #5f5a54;
+  --color-line: #e4ded6;
+  --color-sand: #f7f3ee;
+  --color-sand-200: #efe8df;
+  --color-brand: #fe5d14;
+  --color-brand-hover: #ff7435;
+  --color-brand-strong: #c2410c;
+  --color-brand-soft: #fff0e7;
+  --color-on-dark: #f4efe9;
+  --color-on-dark-muted: #c1b9af;
+
+  --radius-card: 0.75rem;
+  --shadow-card: 0 1px 2px rgb(20 18 15 / 0.06), 0 8px 24px -12px rgb(20 18 15 / 0.18);
+
+  --container-page: 76rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-white);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-brand-strong);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Op donkere vlakken is het lichtere oranje beter zichtbaar. */
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-brand);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/*
+ * Scroll-animatie. De begintoestand wordt pas door JavaScript gezet
+ * (data-reveal="hidden"), dus zonder JavaScript is alles gewoon zichtbaar.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    transition:
+      opacity 500ms ease-out,
+      transform 500ms ease-out;
+  }
+
+  [data-reveal="hidden"] {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+/* Ruimte voor de vaste mobiele actiebalk, zodat die nooit inhoud afdekt. */
+@media (max-width: 47.99rem) {
+  body {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
