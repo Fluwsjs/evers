@@ -6,6 +6,7 @@ import { QuoteForm } from "@/components/forms/QuoteForm";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
+import { getPriceList } from "@/lib/pricing/price-list";
 import { getServiceGroups, routes } from "@/lib/site";
 import { telHref, whatsappHref } from "@/lib/utils";
 
@@ -54,6 +55,8 @@ export default function QuotePage() {
               <Suspense fallback={<div className="min-h-96 rounded-card border border-line bg-white" aria-hidden="true" />}>
                 <QuoteForm
                   groups={groups}
+                  priceList={getPriceList()}
+                  vatRate={site.pricing.vatRate}
                   privacyHref={routes.privacy}
                   thanksHref={routes.thanks}
                   phone={{ href: telHref(contact.phone), display: contact.phoneDisplay }}

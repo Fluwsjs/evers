@@ -1,3 +1,4 @@
+import type { PriceUnit } from "@config/types";
 import type { ContactMoment, RoofType } from "@content/quote-options";
 
 /**
@@ -39,7 +40,7 @@ export interface QuoteRequest {
     preferredMoment: ContactMoment;
   };
 
-  /** Indicatie uit de prijscalculator, als de aanvraag daar vandaan komt (fase 8). */
+  /** Indicatie uit de prijscalculator, als de aanvraag daar vandaan komt. */
   estimate: QuoteEstimate | null;
 
   consent: {
@@ -57,6 +58,7 @@ export interface QuotePhoto {
 }
 
 export interface QuoteEstimate {
-  lines: Array<{ label: string; quantity: number; unit: string; amountInclVat: number }>;
+  /** `amountInclVat` is `null` bij werk zonder vanaf-prijs (prijs op aanvraag). */
+  lines: Array<{ label: string; quantity: number; unit: PriceUnit; amountInclVat: number | null }>;
   totalInclVat: number;
 }

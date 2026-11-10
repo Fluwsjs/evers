@@ -14,6 +14,10 @@ import {
 } from "@content/quote-options";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { calculateEstimate } from "@/lib/pricing/calculate";
+import { formatEuro, formatQuantity } from "@/lib/pricing/format";
+import { decodeSelection, ESTIMATE_PARAM } from "@/lib/pricing/selection";
+import type { PriceListItem, SelectionEntry } from "@/lib/pricing/types";
 import { formatBytes, validatePhotos } from "@/lib/quote/photos";
 import { quoteFormSchema, stepSchemas, toFieldErrors, type FieldErrors } from "@/lib/quote/schema";
 import { cn } from "@/lib/utils";
@@ -38,6 +42,9 @@ export interface QuoteFormServiceGroup {
 
 interface QuoteFormProps {
   groups: QuoteFormServiceGroup[];
+  /** Prijslijst, om een indicatie uit de calculator te kunnen tonen. */
+  priceList: PriceListItem[];
+  vatRate: number;
   privacyHref: string;
   thanksHref: string;
   phone: { href: string; display: string };
@@ -89,7 +96,7 @@ const focusTarget = (field: string) => (field === "photos" ? "veld-photos" : fie
  * stappen heen en weer gaat. Elke stap wordt gecontroleerd voordat u verder kunt; de
  * server controleert bij het verzenden alles opnieuw.
  */
-export function QuoteForm({ groups, privacyHref, thanksHref, phone }: QuoteFormProps) {
+export function QuoteForm({ groups, priceList, vatRate, privacyHref, thanksHref, phone }: QuoteFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -114,6 +121,10 @@ export function QuoteForm({ groups, privacyHref, thanksHref, phone }: QuoteFormP
       website: "",
     };
   });
+
+  // Keuzes uit de prijscalculator: welk werk en hoeveel. De bezoeker kan ze weghalen.
+  const [selection, setSelection] = useState<SelectionEntry[]>(() => decodeSelection(searchParams.get(ESTIMATE_PARAM)));
+  const estimate = calculateEstimate(selection, priceList, { vatRate });
 
   // Is stap 1 al volledig ingevuld op de homepage, dan begint het formulier bij stap 2.
   const [step, setStep] = useState(() => (values.services.length > 0 && values.roofType !== "" ? 1 : 0));
@@ -260,7 +271,12 @@ export function QuoteForm({ groups, privacyHref, thanksHref, phone }: QuoteFormP
     }
     setFormError(null);
 
-    const payload = { ...values, startedAt: startedAt.current, turnstileToken };
+    const payload = {
+      ...values,
+      estimate: estimate.lines.map((line) => ({ id: line.id, quantity: line.quantity })),
+      startedAt: startedAt.current,
+      turnstileToken,
+    };
     const result = quoteFormSchema.safeParse(payload);
     const fieldErrors: FieldErrors = result.success ? {} : toFieldErrors(result.error);
     const photoError = validatePhotos(photos);
@@ -348,6 +364,42 @@ export function QuoteForm({ groups, privacyHref, thanksHref, phone }: QuoteFormP
             .
           </p>
         </div>
+      ) : null}
+
+      {estimate.lines.length > 0 ? (
+        <section aria-labelledby="indicatie-titel" className="mt-6 rounded-lg border border-line bg-sand p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+            <h3 id="indicatie-titel" className="text-lg">
+              Uw indicatie uit de calculator
+            </h3>
+            <button
+              type="button"
+              onClick={() => setSelection([])}
+              className="font-semibold text-brand-strong underline underline-offset-4"
+            >
+              Indicatie weghalen
+            </button>
+          </div>
+          <ul className="mt-2 space-y-1">
+            {estimate.lines.map((line) => (
+              <li key={line.id} className="flex justify-between gap-4">
+                <span>
+                  {line.label} <span className="text-muted">({formatQuantity(line.quantity, line.unit)})</span>
+                </span>
+                <span className="shrink-0 font-semibold">{line.amount === null ? "Op aanvraag" : formatEuro(line.amount)}</span>
+              </li>
+            ))}
+          </ul>
+          {estimate.total > 0 ? (
+            <p className="mt-3 border-t border-line pt-3 font-semibold">
+              Totaal vanaf {formatEuro(estimate.total)} <span className="font-normal text-muted">inclusief btw</span>
+            </p>
+          ) : null}
+          <p className="mt-1 text-sm text-muted">
+            Wij ontvangen deze indicatie bij uw aanvraag. Het blijft een indicatie; de definitieve prijs volgt na een
+            inspectie.
+          </p>
+        </section>
       ) : null}
 
       {/* Stap 1: uw klus */}

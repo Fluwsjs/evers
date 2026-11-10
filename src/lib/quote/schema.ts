@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { contactMoments, OTHER_SERVICE, roofTypes } from "@content/quote-options";
+import { MAX_SELECTION_ENTRIES } from "@/lib/pricing/selection";
 
 /**
  * Validatie voor alle formulieren. Hetzelfde schema draait in de browser (directe
@@ -100,6 +101,14 @@ export const quoteFormSchema = z.object({
   ...step1Schema.shape,
   ...step2Schema.shape,
   ...step3Schema.shape,
+  /**
+   * Keuzes uit de prijscalculator: alleen welk werk en hoeveel. De bedragen rekent de
+   * server zelf opnieuw uit met de prijslijst; wat de browser zou meesturen telt niet.
+   */
+  estimate: z
+    .array(z.object({ id: z.string().regex(/^[a-z0-9-]{1,60}$/), quantity: z.number().positive().max(100000) }))
+    .max(MAX_SELECTION_ENTRIES)
+    .optional(),
   ...spamFields,
 });
 

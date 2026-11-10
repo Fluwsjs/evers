@@ -142,6 +142,25 @@ describe("volledig offerteformulier", () => {
     expect(errors.name).toBe("Vul uw naam in.");
   });
 
+  it("accepteert keuzes uit de prijscalculator", () => {
+    const result = quoteFormSchema.safeParse({ ...validQuote, estimate: [{ id: "zinken-goot", quantity: 12.5 }] });
+    expect(result.success && result.data.estimate).toEqual([{ id: "zinken-goot", quantity: 12.5 }]);
+  });
+
+  it("laat bedragen uit de browser niet door", () => {
+    const result = quoteFormSchema.safeParse({ ...validQuote, estimate: [{ id: "zinken-goot", quantity: 2, amount: 1 }] });
+    expect(result.success && result.data.estimate?.[0]).toEqual({ id: "zinken-goot", quantity: 2 });
+  });
+
+  it.each([
+    [[{ id: "Zinken Goot", quantity: 1 }]],
+    [[{ id: "zinken-goot", quantity: 0 }]],
+    [[{ id: "zinken-goot", quantity: "12" }]],
+    [Array.from({ length: 21 }, (_, index) => ({ id: `werk-${index}`, quantity: 1 }))],
+  ])("weigert ongeldige keuzes uit de calculator", (estimate) => {
+    expect(quoteFormSchema.safeParse({ ...validQuote, estimate }).success).toBe(false);
+  });
+
   it("laat onbekende velden niet door", () => {
     const result = quoteFormSchema.safeParse({ ...validQuote, isAdmin: true });
     expect(result.success && "isAdmin" in result.data).toBe(false);

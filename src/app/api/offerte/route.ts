@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
+import { site } from "@config/site";
 import { OTHER_SERVICE } from "@content/quote-options";
 import { getCompanyRecipient, sendMail } from "@/lib/mail/send";
 import { companyMail, confirmationMail } from "@/lib/mail/templates";
+import { calculateEstimate } from "@/lib/pricing/calculate";
+import { getPriceList } from "@/lib/pricing/price-list";
 import { processPhotos } from "@/lib/quote/photos.server";
 import { createReference } from "@/lib/quote/reference";
 import { normalizePhone, normalizePostcode, quoteFormSchema, toFieldErrors } from "@/lib/quote/schema";
-import type { QuoteRequest } from "@/lib/quote/types";
+import type { QuoteEstimate, QuoteRequest } from "@/lib/quote/types";
 import { clientIp, isRateLimited, looksLikeBot } from "@/lib/security/spam";
 import { verifyTurnstile } from "@/lib/security/turnstile";
 import { getActiveServices } from "@/lib/site";
@@ -76,11 +79,28 @@ export async function POST(request: Request) {
   }
   const { attachments, omitted } = photoResult.photos;
 
+  // De indicatie wordt hier opnieuw berekend; alleen werk en aantallen komen uit het formulier.
+  let estimate: QuoteEstimate | null = null;
+  if (values.estimate && values.estimate.length > 0) {
+    const result = calculateEstimate(values.estimate, getPriceList(), { vatRate: site.pricing.vatRate });
+    if (result.lines.length > 0) {
+      estimate = {
+        lines: result.lines.map((line) => ({
+          label: line.label,
+          quantity: line.quantity,
+          unit: line.unit,
+          amountInclVat: line.amount,
+        })),
+        totalInclVat: result.total,
+      };
+    }
+  }
+
   const now = new Date();
   const quote: QuoteRequest = {
     id: createReference(now),
     createdAt: now.toISOString(),
-    source: "offerte",
+    source: estimate ? "calculator" : "offerte",
     services: values.services,
     roofType: values.roofType,
     urgent: values.urgent,
@@ -102,7 +122,7 @@ export async function POST(request: Request) {
       email: values.email,
       preferredMoment: values.preferredMoment,
     },
-    estimate: null,
+    estimate,
     consent: { privacy: values.privacyConsent, at: now.toISOString() },
   };
 

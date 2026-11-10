@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "check:prices": "tsx scripts/check-prices.ts",
+    "prebuild": "npm run check:prices",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

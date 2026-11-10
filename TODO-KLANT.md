@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 7. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 8. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)
@@ -78,3 +78,16 @@ Per project (Nieuwbouw Zutphen, Nieuwbouw Schuytgraaf Arnhem, Dakrenovatie Elst)
 - [ ] Plaatsnaampagina's (Elst, Zutphen, Arnhem): teksten laten nalezen en aanvullen met eigen ervaring per plaats (`content/places.ts`)
 - [ ] Privacyverklaring laten controleren door de klant of een jurist; bewaartermijn voor aanvragen vaststellen; hostingpartij en mailprovider invullen
 - [ ] Algemene voorwaarden aanleveren (tekst of pdf). Tot dan verwijst de pagina naar opvragen per telefoon of mail en wordt ze niet geïndexeerd.
+
+## Prijzen en calculator (`config/site.ts`, onderdeel `pricing`)
+
+Alle twaalf bedragen in de config zijn **voorbeeldprijzen**, alleen om de calculator te kunnen bouwen en testen.
+Ze staan in de code als `TODO: prijs bevestigen door klant`. Zolang een prijs niet bevestigd is, staat op de
+live site "Prijs op aanvraag", is de calculator verborgen en wordt /prijzen/ niet geïndexeerd.
+
+- [ ] Per regel de echte vanaf-prijs inclusief btw (of "geen prijs"), daarna `confirmed: true`
+- [ ] Lijst met werkzaamheden controleren: kloppen de twaalf regels, mist er werk, moet er iets af?
+- [ ] Wat zit er in een vanaf-prijs: steiger, afvoer van oud materiaal, voorrijkosten?
+- [ ] Minimumbedrag per klus, als dat er is (de calculator kan ermee rekenen)
+- [ ] Btw: bevestigen dat overal 21% geldt
+- [ ] Tekst "Wat bepaalt de prijs van uw dak?" op /prijzen/ laten nalezen

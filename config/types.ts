@@ -47,6 +47,28 @@ export interface Brand {
   url: string | null;
 }
 
+/** Eenheid waarin een prijs wordt gerekend: per vierkante meter, per strekkende meter of per stuk. */
+export type PriceUnit = "m2" | "m1" | "stuk";
+
+export interface PriceItem {
+  /** Vaste sleutel; komt terug in links van de calculator naar het offerteformulier. */
+  id: string;
+  /** Dienst waar dit werk bij hoort (slug uit /content/services). */
+  serviceSlug: string;
+  /** Omschrijving van het werk zoals de bezoeker die ziet. */
+  label: string;
+  unit: PriceUnit;
+  /** Vanaf-prijs per eenheid in euro, inclusief btw. `null` = "Prijs op aanvraag". */
+  fromPrice: number | null;
+  /** Laagste bedrag dat voor dit werk wordt gerekend, inclusief btw. `null` = geen minimum. */
+  minimum: number | null;
+  /**
+   * `false` = voorbeeldprijs die de klant nog moet bevestigen. Onbevestigde prijzen
+   * zijn alleen tijdens de bouw zichtbaar; op de live site staat er "Prijs op aanvraag".
+   */
+  confirmed: boolean;
+}
+
 export interface SiteConfig {
   name: string;
   shortName: string;
@@ -131,6 +153,12 @@ export interface SiteConfig {
     regionLabel: string | null;
     /** Slugs van plaatsen met een eigen pagina (zie /content/places). */
     places: string[];
+  };
+
+  pricing: {
+    /** Btw-tarief dat in de prijzen is inbegrepen, bijvoorbeeld 0.21. */
+    vatRate: number;
+    items: PriceItem[];
   };
 
   features: {

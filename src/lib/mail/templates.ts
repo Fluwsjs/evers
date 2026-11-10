@@ -1,6 +1,7 @@
 import { site } from "@config/site";
 import { contactMoments, OTHER_SERVICE, roofTypes } from "@content/quote-options";
 import { services } from "@content/services";
+import { formatEuro, formatQuantity } from "@/lib/pricing/format";
 import type { QuoteRequest } from "@/lib/quote/types";
 
 /**
@@ -31,8 +32,6 @@ const formatDate = (iso: string) =>
   new Intl.DateTimeFormat("nl-NL", { dateStyle: "long", timeStyle: "short", timeZone: "Europe/Amsterdam" }).format(
     new Date(iso),
   );
-const formatEuro = (amount: number) =>
-  new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR" }).format(amount);
 
 type Row = [label: string, value: string];
 
@@ -52,9 +51,11 @@ function requestRows(request: QuoteRequest): Row[] {
       "Indicatie calculator",
       [
         ...request.estimate.lines.map(
-          (line) => `${line.label}: ${line.quantity} ${line.unit} = ${formatEuro(line.amountInclVat)}`,
+          (line) =>
+            `${line.label}: ${formatQuantity(line.quantity, line.unit)} = ${line.amountInclVat === null ? "prijs op aanvraag" : formatEuro(line.amountInclVat)}`,
         ),
         `Totaal vanaf ${formatEuro(request.estimate.totalInclVat)} incl. btw`,
+        "Dit is een indicatie op basis van vanaf-prijzen, geen offerte.",
       ].join("\n"),
     ]);
   }

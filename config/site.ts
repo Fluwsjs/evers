@@ -135,6 +135,34 @@ export const site: SiteConfig = {
     places: ["elst", "zutphen", "arnhem"], // TODO: aanleveren door klant (vestigingsplaats en overige plaatsen)
   },
 
+  /**
+   * Vanaf-prijzen voor de dienstpagina's, de prijzenpagina en de calculator.
+   *
+   * LET OP: alle bedragen hieronder zijn VOORBEELDPRIJZEN om de calculator te kunnen
+   * bouwen en testen. Het zijn geen prijzen van het bedrijf. Zolang `confirmed` op
+   * `false` staat, toont de live site "Prijs op aanvraag" en waarschuwt de build
+   * (`npm run check:prices`). Zet per regel de echte prijs in en `confirmed` op `true`.
+   * Een dienst zonder prijs: `fromPrice: null`.
+   */
+  pricing: {
+    vatRate: 0.21, // TODO: aanleveren door klant (bevestigen dat overal 21% btw geldt)
+    items: [
+      { id: "dakpannen-vervangen", serviceSlug: "dakrenovatie", label: "Dakpannen vervangen, met nieuwe panlatten en folie", unit: "m2", fromPrice: 95, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "dakisolatie-hellend", serviceSlug: "dakrenovatie", label: "Hellend dak van buitenaf isoleren", unit: "m2", fromPrice: 60, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "plat-dak-bedekking", serviceSlug: "platte-daken", label: "Nieuwe dakbedekking op een plat dak", unit: "m2", fromPrice: 75, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "plat-dak-isolatie", serviceSlug: "platte-daken", label: "Plat dak isoleren", unit: "m2", fromPrice: 45, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "schoorsteen-voegen", serviceSlug: "schoorsteenrenovatie", label: "Schoorsteen opnieuw voegen", unit: "stuk", fromPrice: 650, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "schoorsteen-lood", serviceSlug: "schoorsteenrenovatie", label: "Lood rond de schoorsteen vervangen", unit: "stuk", fromPrice: 450, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "loodaansluiting", serviceSlug: "lood-en-zinkwerk", label: "Loodaansluiting vervangen", unit: "m1", fromPrice: 85, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "zinken-goot", serviceSlug: "lood-en-zinkwerk", label: "Zinken dakgoot vervangen", unit: "m1", fromPrice: 110, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "boeidelen", serviceSlug: "timmerwerk", label: "Boeidelen vervangen", unit: "m1", fromPrice: 90, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "dakbeschot", serviceSlug: "timmerwerk", label: "Dakbeschot vervangen", unit: "m2", fromPrice: 55, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "dakraam-plaatsen", serviceSlug: "velux-dakramen", label: "Nieuw dakraam plaatsen", unit: "stuk", fromPrice: 1250, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      { id: "dakraam-vervangen", serviceSlug: "velux-dakramen", label: "Bestaand dakraam vervangen", unit: "stuk", fromPrice: 950, minimum: null, confirmed: false }, // TODO: prijs bevestigen door klant
+      // TODO: aanleveren door klant (lijst met werkzaamheden controleren, minimumbedragen per klus)
+    ],
+  },
+
   features: {
     calculator: true,
     reviews: false, // Aan zodra er echte Google-reviews in /content staan.

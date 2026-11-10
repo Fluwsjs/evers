@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { site } from "@config/site";
 import { images } from "@content/images.generated";
@@ -16,6 +17,8 @@ import { ClientTodo } from "@/components/ui/ClientTodo";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { Section, SectionHeading } from "@/components/ui/Section";
+import { formatEuro, unitLabels } from "@/lib/pricing/format";
+import { getPriceList } from "@/lib/pricing/price-list";
 import { getActiveServices, getProjectsForService, getService, quoteHref, routes } from "@/lib/site";
 import { inSentence, telHref } from "@/lib/utils";
 
@@ -54,6 +57,7 @@ export default async function ServicePage({ params }: PageProps) {
     .map((relatedSlug) => getService(relatedSlug))
     .filter((item) => item !== undefined);
   const name = inSentence(service.navTitle);
+  const prices = getPriceList().filter((item) => item.serviceSlug === slug && item.unitPrice !== null);
 
   return (
     <>
@@ -186,13 +190,38 @@ export default async function ServicePage({ params }: PageProps) {
             ) : null}
           </div>
 
-          {/* De vanaf-prijs uit de config komt hier in fase 8. Zonder prijs: "Prijs op aanvraag". */}
+          {/* Vanaf-prijzen uit de config. Zonder (bevestigde) prijs: "Prijs op aanvraag". */}
           <aside aria-labelledby="prijs-titel" className="self-start rounded-card bg-sand p-6 sm:p-8 lg:sticky lg:top-28">
             <h2 id="prijs-titel" className="text-2xl">
               Wat kost het?
             </h2>
-            <p className="mt-3 font-display text-xl font-extrabold text-brand-strong">Prijs op aanvraag</p>
-            <p className="mt-3 text-muted">Elk dak is anders. De prijs hangt onder meer af van:</p>
+            {prices.length > 0 ? (
+              <>
+                <ul className="mt-4 divide-y divide-line border-y border-line">
+                  {prices.map((item) => (
+                    <li key={item.id} className="py-3">
+                      <span className="block">{item.label}</span>
+                      <span className="block">
+                        <span className="text-sm text-muted">vanaf </span>
+                        <span className="font-display text-xl font-extrabold">{formatEuro(item.unitPrice ?? 0)}</span>{" "}
+                        <span className="text-sm text-muted">{unitLabels[item.unit].per}, incl. btw</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {prices.some((item) => item.example) ? (
+                  <p className="mt-3">
+                    <ClientTodo>voorbeeldprijzen: bevestigen of aanpassen</ClientTodo>
+                  </p>
+                ) : null}
+                <p className="mt-4 text-muted">Dit zijn vanaf-prijzen. Wat het voor uw dak kost, hangt onder meer af van:</p>
+              </>
+            ) : (
+              <>
+                <p className="mt-3 font-display text-xl font-extrabold text-brand-strong">Prijs op aanvraag</p>
+                <p className="mt-3 text-muted">Elk dak is anders. De prijs hangt onder meer af van:</p>
+              </>
+            )}
             <ul className="mt-4 space-y-2">
               {detail.priceFactors.map((factor) => (
                 <li key={factor} className="flex gap-3">
@@ -210,6 +239,13 @@ export default async function ServicePage({ params }: PageProps) {
                 <Icon name="arrow-right" />
               </ButtonLink>
             </div>
+            {prices.length > 0 && site.features.calculator ? (
+              <p className="mt-4 text-center">
+                <Link href={`${routes.prices}#calculator`} className="font-semibold text-brand-strong underline underline-offset-4">
+                  Bereken zelf een indicatie
+                </Link>
+              </p>
+            ) : null}
           </aside>
         </div>
       </Section>

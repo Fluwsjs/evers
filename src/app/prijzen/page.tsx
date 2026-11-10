@@ -1,0 +1,156 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { site } from "@config/site";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { CtaBand } from "@/components/sections/CtaBand";
+import { PriceCalculatorSection } from "@/components/sections/PriceCalculatorSection";
+import { Card } from "@/components/ui/Card";
+import { ClientTodo } from "@/components/ui/ClientTodo";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Section, SectionHeading } from "@/components/ui/Section";
+import { formatEuro, unitLabels } from "@/lib/pricing/format";
+import { getPriceGroups, hasVisiblePrices } from "@/lib/pricing/price-list";
+import { serviceHref } from "@/lib/site";
+
+const pricesVisible = hasVisiblePrices();
+
+export const metadata: Metadata = {
+  title: pricesVisible ? "Prijzen: wat kost een dakdekker?" : "Prijzen",
+  description: pricesVisible
+    ? `Vanaf-prijzen van ${site.name} per m², per meter en per stuk. Bereken met de calculator een indicatie inclusief btw en vraag direct een offerte aan.`
+    : `Wat bepaalt de prijs van dakwerk? Vraag een vrijblijvende offerte aan bij ${site.name}.`,
+  // Zonder prijzen heeft deze pagina zoekers weinig te bieden; dan blijft ze uit de index.
+  ...(pricesVisible ? {} : { robots: { index: false, follow: true } }),
+};
+
+/** Wat de prijs van dakwerk bepaalt. Algemene vakkennis, geen toezeggingen van het bedrijf. */
+const priceFactors = [
+  {
+    title: "Oppervlakte en vorm",
+    text: "Een groter dak kost meer, maar de vorm telt ook mee. Een dak met dakkapellen, kilgoten en veel aansluitingen vraagt meer werk per vierkante meter dan een recht dakvlak.",
+  },
+  {
+    title: "Staat van de ondergrond",
+    text: "Pas als de oude dakbedekking eraf is, is goed te zien hoe het dakbeschot en de constructie eraan toe zijn. Aangetast hout moet eerst worden hersteld.",
+  },
+  {
+    title: "Bereikbaarheid",
+    text: "De hoogte van het dak en de ruimte rond de woning bepalen of er een steiger nodig is en hoe materiaal op het dak komt.",
+  },
+  {
+    title: "Materiaalkeuze",
+    text: "Er zit verschil in prijs en levensduur tussen soorten dakpannen, dakbedekking, isolatie en dakramen. In de offerte leggen wij de keuzes naast elkaar.",
+  },
+];
+
+export default function PricesPage() {
+  const groups = getPriceGroups();
+  const hasExamples = groups.some((group) => group.items.some((item) => item.example));
+
+  return (
+    <>
+      <Breadcrumbs items={[{ label: "Prijzen" }]} />
+      <PageHeader
+        title="Wat kost een dakdekker?"
+        intro={
+          pricesVisible
+            ? "Op deze pagina vindt u onze vanaf-prijzen en kunt u zelf een indicatie berekenen. De definitieve prijs hoort u na een inspectie van uw dak, in een vrijblijvende offerte."
+            : "De prijs van dakwerk hangt af van uw dak. Hieronder leest u wat de prijs bepaalt. Voor een prijs voor uw situatie maken wij graag een vrijblijvende offerte."
+        }
+      />
+
+      <PriceCalculatorSection title={pricesVisible ? "Bereken uw indicatie" : "Een prijs voor uw dak"} eyebrow="Calculator" />
+
+      {groups.length > 0 ? (
+        <Section tone="sand" labelledBy="prijslijst-titel" id="prijslijst">
+          <SectionHeading
+            id="prijslijst-titel"
+            eyebrow="Prijslijst"
+            title="Vanaf-prijzen per dienst"
+            intro="Alle bedragen zijn inclusief btw. Een vanaf-prijs is een ondergrens: de prijs voor uw dak kan hoger uitkomen."
+          />
+          {hasExamples ? (
+            <p className="mt-4">
+              <ClientTodo>voorbeeldprijzen: alle bedragen bevestigen of aanpassen</ClientTodo>
+            </p>
+          ) : null}
+          <p className="mt-4">
+            <ClientTodo>wat zit er in de vanaf-prijs (steiger, afvoer van oud materiaal, voorrijkosten)</ClientTodo>
+          </p>
+          <div className="mt-10 overflow-hidden rounded-card border border-line bg-white shadow-card">
+            <table className="w-full border-collapse text-left">
+              <caption className="sr-only">Vanaf-prijzen per dienst, inclusief btw</caption>
+              <thead className="max-sm:sr-only">
+                <tr className="border-b border-line text-sm text-muted">
+                  <th scope="col" className="px-4 py-3 font-semibold sm:px-6">
+                    Werkzaamheden
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-right font-semibold sm:px-6">
+                    Vanaf-prijs
+                  </th>
+                </tr>
+              </thead>
+              {groups.map((group) => (
+                <tbody key={group.serviceSlug}>
+                  <tr className="border-b border-line bg-sand-200/60">
+                    <th scope="rowgroup" colSpan={2} className="px-4 py-3 sm:px-6">
+                      <Link
+                        href={serviceHref(group.serviceSlug)}
+                        className="font-display text-lg font-extrabold underline-offset-4 hover:underline"
+                      >
+                        {group.title}
+                      </Link>
+                    </th>
+                  </tr>
+                  {group.items.map((item) => (
+                    <tr key={item.id} className="border-b border-line last:border-b-0">
+                      <th scope="row" className="px-4 py-3 font-normal sm:px-6">
+                        {item.label}
+                      </th>
+                      <td className="px-4 py-3 text-right whitespace-nowrap sm:px-6">
+                        {item.unitPrice === null ? (
+                          <span className="text-muted">Prijs op aanvraag</span>
+                        ) : (
+                          <>
+                            <span className="font-semibold">{formatEuro(item.unitPrice)}</span>{" "}
+                            <span className="text-sm text-muted">{unitLabels[item.unit].per}</span>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ))}
+            </table>
+          </div>
+        </Section>
+      ) : null}
+
+      <Section labelledBy="prijsfactoren-titel" tone={groups.length > 0 ? "white" : "sand"}>
+        <SectionHeading
+          id="prijsfactoren-titel"
+          eyebrow="Goed om te weten"
+          title="Wat bepaalt de prijs van uw dak?"
+          intro="Twee daken van dezelfde grootte kunnen flink in prijs verschillen. Dit zijn de vier dingen die het meeste uitmaken."
+        />
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2">
+          {priceFactors.map((factor) => (
+            <Card as="li" key={factor.title}>
+              <h3 className="text-lg">{factor.title}</h3>
+              <p className="mt-2 text-muted">{factor.text}</p>
+            </Card>
+          ))}
+        </ul>
+        <p className="mt-8 max-w-3xl text-lg">
+          Daarom komen wij altijd eerst kijken voordat wij een prijs afgeven. In de offerte staat wat wij doen, met
+          welke materialen en wat het kost.
+        </p>
+      </Section>
+
+      <CtaBand
+        title="Een prijs voor uw dak?"
+        text="Vertel ons wat er moet gebeuren en stuur gerust foto's mee. U ontvangt een vrijblijvende offerte."
+      />
+    </>
+  );
+}
