@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 3. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 4. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)
@@ -54,3 +54,11 @@ Per project (Nieuwbouw Zutphen, Nieuwbouw Schuytgraaf Arnhem, Dakrenovatie Elst)
 - [ ] Antwoorden bij de veelgestelde vragen laten nalezen (`content/faq.ts`)
 - [ ] Reactietijd na een aanvraag (voor de FAQ en de bedankpagina)
 - [ ] Google-reviews om over te nemen (`content/reviews.ts`)
+
+## Dienstpagina's (`content/services/`)
+
+- [ ] Teksten van de zes dienstpagina's laten nalezen. De vakinhoud is algemeen; graag controleren of de beschreven werkwijze klopt met hoe Evers werkt (bijv. dak elke werkdag waterdicht, lood in korte stroken, afval afvoeren).
+- [ ] Platte daken: met welke dakbedekking wordt gewerkt (bitumen, EPDM of beide)?
+- [ ] VELUX dakramen: verzorgt Evers ook de binnenafwerking, en klopt "doorgaans binnen een dag geplaatst"?
+- [ ] Foto van een gerenoveerde schoorsteen (de pagina Schoorsteenrenovatie heeft nog geen foto)
+- [ ] Passender foto's voor Platte daken en Timmerwerk (nu de best beschikbare foto's uit het project Elst)

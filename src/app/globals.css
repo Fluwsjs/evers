@@ -64,6 +64,16 @@
     text-wrap: balance;
   }
 
+  /* Lange samenstellingen ("Schoorsteenrenovatie") mogen op smalle schermen afbreken. */
+  @media (max-width: 39.99rem) {
+    h1,
+    h2,
+    h3 {
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+  }
+
   p {
     text-wrap: pretty;
   }

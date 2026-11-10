@@ -1,8 +1,18 @@
 import type { ServiceCategoryId } from "@config/types";
+import { dakrenovatie } from "./dakrenovatie";
+import { loodEnZinkwerk } from "./lood-en-zinkwerk";
+import { platteDaken } from "./platte-daken";
+import { schoorsteenrenovatie } from "./schoorsteenrenovatie";
+import { timmerwerk } from "./timmerwerk";
+import type { ServiceDetail } from "./types";
+import { veluxDakramen } from "./velux-dakramen";
+
+export type { ServiceDetail, TitledText } from "./types";
 
 /**
  * Basisgegevens per dienst: genoeg voor navigatie, kaarten en formulieren.
- * De volledige paginateksten volgen in fase 4.
+ * De volledige paginateksten staan per dienst in een eigen bestand in deze map
+ * en zijn op te vragen met `getServiceDetail`.
  *
  * Of een dienst zichtbaar is bepaalt `site.services.enabled` in de config,
  * niet dit bestand.
@@ -119,3 +129,27 @@ export const services: ServiceSummary[] = [
     shortDescription: "Dakgoten vervangen en herstellen.",
   },
 ];
+
+/**
+ * Diensten met een uitgeschreven pagina. Een dienst die in de config aan staat
+ * maar hier ontbreekt, laat de build falen (zie `getServiceDetail`): zo gaat er
+ * nooit een lege dienstpagina live.
+ */
+const details: ServiceDetail[] = [
+  dakrenovatie,
+  platteDaken,
+  schoorsteenrenovatie,
+  loodEnZinkwerk,
+  timmerwerk,
+  veluxDakramen,
+];
+
+export function getServiceDetail(slug: string): ServiceDetail {
+  const detail = details.find((item) => item.slug === slug);
+  if (!detail) {
+    throw new Error(
+      `Dienst "${slug}" staat aan in config/site.ts maar heeft nog geen paginatekst in content/services/.`,
+    );
+  }
+  return detail;
+}

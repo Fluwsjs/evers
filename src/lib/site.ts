@@ -1,6 +1,8 @@
 import { site } from "@config/site";
 import type { ServiceCategory } from "@config/types";
 import { places, type PlaceSummary } from "@content/places";
+import { projects, type Project } from "@content/projects";
+import { quoteParams } from "@content/quote-options";
 import { services, type ServiceSummary } from "@content/services";
 
 export interface ServiceGroup {
@@ -72,4 +74,18 @@ export function getActivePlaces(): PlaceSummary[] {
 /** "Elst, Zutphen en Arnhem" */
 export function formatList(items: string[]): string {
   return new Intl.ListFormat("nl-NL", { style: "long", type: "conjunction" }).format(items);
+}
+
+export function getService(slug: string): ServiceSummary | undefined {
+  return getActiveServices().find((service) => service.slug === slug);
+}
+
+/** Link naar het offerteformulier, eventueel met een dienst alvast geselecteerd. */
+export function quoteHref(serviceSlug?: string): string {
+  return serviceSlug ? `${routes.quote}?${quoteParams.service}=${serviceSlug}` : routes.quote;
+}
+
+/** Projecten waarin een dienst is uitgevoerd. */
+export function getProjectsForService(serviceSlug: string): Project[] {
+  return projects.filter((project) => project.serviceSlugs.includes(serviceSlug));
 }
