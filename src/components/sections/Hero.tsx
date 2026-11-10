@@ -48,7 +48,8 @@ export function Hero() {
       />
       <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-linear-to-t from-ink/70 to-transparent" />
 
-      <Container className="grid gap-10 py-12 md:py-16 lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-center lg:gap-12 xl:grid-cols-[minmax(0,1fr)_32rem] xl:gap-20 xl:py-16">
+      {/* Onderaan extra ruimte: de merkenkaart van de volgende sectie valt over de onderrand heen. */}
+      <Container className="grid gap-10 pt-12 pb-24 md:pt-16 md:pb-28 lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-center lg:gap-12 xl:grid-cols-[minmax(0,1fr)_32rem] xl:gap-20">
         <div>
           <h1
             id="hero-titel"
