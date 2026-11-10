@@ -55,7 +55,7 @@ export function QuoteStarter({ headingId = "offerte-start" }: { headingId?: stri
         <fieldset>
           <legend className={legendClasses}>Waar heeft u hulp bij nodig?</legend>
           <p className="mt-1 text-sm text-muted">Meerdere keuzes mogelijk.</p>
-          <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-3">
+          <div className="mt-4 grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
             {groups.map((group) => (
               <div key={group.category.id}>
                 <p className="mb-2 text-sm font-semibold text-muted">{group.category.title}</p>

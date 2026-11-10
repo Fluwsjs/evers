@@ -8,7 +8,9 @@ import { FaqSection } from "@/components/sections/FaqAccordion";
 import { Hero } from "@/components/sections/Hero";
 import { KeyFigures } from "@/components/sections/KeyFigures";
 import { PriceCalculatorSection } from "@/components/sections/PriceCalculatorSection";
+import { PriceTableSection } from "@/components/sections/PriceTable";
 import { ProcessSteps } from "@/components/sections/ProcessSteps";
+import { QuoteSection } from "@/components/sections/QuoteSection";
 import { ProjectHighlights } from "@/components/sections/ProjectHighlights";
 import { Reviews } from "@/components/sections/Reviews";
 import { ServiceArea } from "@/components/sections/ServiceArea";
@@ -30,8 +32,10 @@ export default function HomePage() {
       <KeyFigures />
       <AboutTeaser />
       <ServiceCards />
-      <PriceCalculatorSection />
+      <PriceTableSection variant="home" tone="white" />
+      <PriceCalculatorSection tone="sand" />
       <ProcessSteps />
+      <QuoteSection />
       <ProjectHighlights />
       <Reviews />
       <ServiceArea />

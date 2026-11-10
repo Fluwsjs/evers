@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { site } from "@config/site";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { PriceCalculatorSection } from "@/components/sections/PriceCalculatorSection";
+import { PriceTableSection } from "@/components/sections/PriceTable";
 import { Card } from "@/components/ui/Card";
-import { ClientTodo } from "@/components/ui/ClientTodo";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section, SectionHeading } from "@/components/ui/Section";
-import { formatEuro, unitLabels } from "@/lib/pricing/format";
 import { getPriceGroups, hasVisiblePrices } from "@/lib/pricing/price-list";
-import { serviceHref } from "@/lib/site";
 
 const pricesVisible = hasVisiblePrices();
 
@@ -45,7 +42,6 @@ const priceFactors = [
 
 export default function PricesPage() {
   const groups = getPriceGroups();
-  const hasExamples = groups.some((group) => group.items.some((item) => item.example));
 
   return (
     <>
@@ -61,70 +57,7 @@ export default function PricesPage() {
 
       <PriceCalculatorSection title={pricesVisible ? "Bereken uw indicatie" : "Een prijs voor uw dak"} eyebrow="Calculator" />
 
-      {groups.length > 0 ? (
-        <Section tone="sand" labelledBy="prijslijst-titel" id="prijslijst">
-          <SectionHeading
-            id="prijslijst-titel"
-            eyebrow="Prijslijst"
-            title="Vanaf-prijzen per dienst"
-            intro="Alle bedragen zijn inclusief btw. Een vanaf-prijs is een ondergrens: de prijs voor uw dak kan hoger uitkomen."
-          />
-          {hasExamples ? (
-            <p className="mt-4">
-              <ClientTodo>voorbeeldprijzen: alle bedragen bevestigen of aanpassen</ClientTodo>
-            </p>
-          ) : null}
-          <p className="mt-4">
-            <ClientTodo>wat zit er in de vanaf-prijs (steiger, afvoer van oud materiaal, voorrijkosten)</ClientTodo>
-          </p>
-          <div className="mt-10 overflow-hidden rounded-card border border-line bg-white shadow-card">
-            <table className="w-full border-collapse text-left">
-              <caption className="sr-only">Vanaf-prijzen per dienst, inclusief btw</caption>
-              <thead className="max-sm:sr-only">
-                <tr className="border-b border-line text-sm text-muted">
-                  <th scope="col" className="px-4 py-3 font-semibold sm:px-6">
-                    Werkzaamheden
-                  </th>
-                  <th scope="col" className="px-4 py-3 text-right font-semibold sm:px-6">
-                    Vanaf-prijs
-                  </th>
-                </tr>
-              </thead>
-              {groups.map((group) => (
-                <tbody key={group.serviceSlug}>
-                  <tr className="border-b border-line bg-sand-200/60">
-                    <th scope="rowgroup" colSpan={2} className="px-4 py-3 sm:px-6">
-                      <Link
-                        href={serviceHref(group.serviceSlug)}
-                        className="font-display text-lg font-extrabold underline-offset-4 hover:underline"
-                      >
-                        {group.title}
-                      </Link>
-                    </th>
-                  </tr>
-                  {group.items.map((item) => (
-                    <tr key={item.id} className="border-b border-line last:border-b-0">
-                      <th scope="row" className="px-4 py-3 font-normal sm:px-6">
-                        {item.label}
-                      </th>
-                      <td className="px-4 py-3 text-right whitespace-nowrap sm:px-6">
-                        {item.unitPrice === null ? (
-                          <span className="text-muted">Prijs op aanvraag</span>
-                        ) : (
-                          <>
-                            <span className="font-semibold">{formatEuro(item.unitPrice)}</span>{" "}
-                            <span className="text-sm text-muted">{unitLabels[item.unit].per}</span>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              ))}
-            </table>
-          </div>
-        </Section>
-      ) : null}
+      <PriceTableSection />
 
       <Section labelledBy="prijsfactoren-titel" tone={groups.length > 0 ? "white" : "sand"}>
         <SectionHeading

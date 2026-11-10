@@ -1,8 +1,11 @@
+import Image from "next/image";
+import { site } from "@config/site";
 import type { FaqItem } from "@content/faq";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { routes } from "@/lib/site";
+import { mailHref, telHref } from "@/lib/utils";
 
 interface FaqListProps {
   items: FaqItem[];
@@ -36,6 +39,7 @@ export function FaqList({ items, headingLevel: Heading = "h3" }: FaqListProps) {
 /** FAQ-sectie voor de homepage. De FAQPage-structured data volgt in fase 9. */
 export function FaqSection({ items }: { items: FaqItem[] }) {
   if (items.length === 0) return null;
+  const { contact, owner } = site;
 
   return (
     <Section labelledBy="faq-titel">
@@ -45,14 +49,51 @@ export function FaqSection({ items }: { items: FaqItem[] }) {
             id="faq-titel"
             eyebrow="Veelgestelde vragen"
             title="Vragen over uw dak"
-            intro="Staat uw vraag er niet bij? Bel of mail ons gerust."
           />
-          <div className="mt-8">
+          <div className="mt-6">
             <ButtonLink href={routes.faq} variant="outline">
               Alle vragen
               <Icon name="arrow-right" />
             </ButtonLink>
           </div>
+
+          {/* Contactkaart: wie een vraag heeft die er niet bij staat, kan direct bellen. */}
+          <aside aria-labelledby="faq-contact-titel" className="mt-10 rounded-card bg-sand p-6">
+            <div className="flex items-start gap-4">
+              {owner.photo && owner.name ? (
+                <Image
+                  src={owner.photo}
+                  alt={owner.name}
+                  width={64}
+                  height={64}
+                  className="size-16 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-full bg-ink text-white">
+                  <Icon name="chat" />
+                </span>
+              )}
+              <div>
+                <h3 id="faq-contact-titel" className="text-xl">
+                  Staat uw vraag er niet bij?
+                </h3>
+                <p className="mt-1 text-muted">
+                  {owner.name
+                    ? `Bel of mail gerust. ${owner.name} denkt graag met u mee over uw dak.`
+                    : "Bel of mail gerust. Wij denken graag met u mee over uw dak."}
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <ButtonLink href={telHref(contact.phone)} variant="dark">
+                <Icon name="phone" />
+                Bel {contact.phoneDisplay}
+              </ButtonLink>
+              <a href={mailHref(contact.email)} className="font-semibold text-brand-strong underline underline-offset-4">
+                Stuur een e-mail
+              </a>
+            </div>
+          </aside>
         </div>
         <FaqList items={items} />
       </div>

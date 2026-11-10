@@ -5,6 +5,7 @@ import { site } from "@config/site";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileActionBar } from "@/components/layout/MobileActionBar";
+import { ScrollAids } from "@/components/layout/ScrollAids";
 import { MAIN_CONTENT_ID, SkipLink } from "@/components/layout/SkipLink";
 import { TopBar } from "@/components/layout/TopBar";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </main>
         <Footer />
         <MobileActionBar />
+        <ScrollAids />
       </body>
     </html>
   );

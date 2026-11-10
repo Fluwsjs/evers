@@ -48,6 +48,8 @@ interface QuoteFormProps {
   privacyHref: string;
   thanksHref: string;
   phone: { href: string; display: string };
+  /** Kopniveau van de stapkop: h2 op de eigen pagina, h3 onder een sectiekop. */
+  headingLevel?: "h2" | "h3";
 }
 
 interface Values {
@@ -96,7 +98,15 @@ const focusTarget = (field: string) => (field === "photos" ? "veld-photos" : fie
  * stappen heen en weer gaat. Elke stap wordt gecontroleerd voordat u verder kunt; de
  * server controleert bij het verzenden alles opnieuw.
  */
-export function QuoteForm({ groups, priceList, vatRate, privacyHref, thanksHref, phone }: QuoteFormProps) {
+export function QuoteForm({
+  groups,
+  priceList,
+  vatRate,
+  privacyHref,
+  thanksHref,
+  phone,
+  headingLevel: StepHeading = "h2",
+}: QuoteFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -346,12 +356,12 @@ export function QuoteForm({ groups, priceList, vatRate, privacyHref, thanksHref,
         ))}
       </ol>
 
-      <h2 id="stap-titel" ref={headingRef} tabIndex={-1} className="mt-8 text-2xl outline-none md:text-3xl">
+      <StepHeading id="stap-titel" ref={headingRef} tabIndex={-1} className="mt-8 text-2xl outline-none md:text-3xl">
         <span className="sr-only">
           Stap {step + 1} van {STEPS.length}:{" "}
         </span>
         {step === 0 ? "Waar heeft u hulp bij nodig?" : step === 1 ? "Waar is het en wat is er aan de hand?" : "Hoe kunnen wij u bereiken?"}
-      </h2>
+      </StepHeading>
 
       {formError ? (
         <div role="alert" className="mt-6 rounded-lg border border-red-700 bg-red-50 p-4 text-red-900">
@@ -369,9 +379,9 @@ export function QuoteForm({ groups, priceList, vatRate, privacyHref, thanksHref,
       {estimate.lines.length > 0 ? (
         <section aria-labelledby="indicatie-titel" className="mt-6 rounded-lg border border-line bg-sand p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
-            <h3 id="indicatie-titel" className="text-lg">
+            <p id="indicatie-titel" className="font-display text-lg font-extrabold">
               Uw indicatie uit de calculator
-            </h3>
+            </p>
             <button
               type="button"
               onClick={() => setSelection([])}
