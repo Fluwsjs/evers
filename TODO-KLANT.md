@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 2. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 3. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)
@@ -24,13 +24,33 @@ Bijgewerkt na fase 2. Elk punt staat in de code als `TODO: aanleveren door klant
 - [ ] Kerncijfers: jaren ervaring en aantal projecten (alleen echte cijfers)
 - [ ] VCA: welke variant en het certificaatnummer
 - [ ] Garantietermijnen per soort werk
-- [ ] Merken waarmee gewerkt wordt (naast Koramic en VELUX), met logo's die gebruikt mogen worden
+- [ ] Merken bevestigen: Koramic, Monier, Kingspan Unidek en Keralit (staan als logo op de huidige site) en VELUX. Aanvullen waar nodig, met logo-bestanden die gebruikt mogen worden; tot dan staan de merken als naam op de site.
 
 ## Diensten en werkgebied
 
 - [ ] Welke extra diensten mogen aan: daklekkage/dakreparatie, dakinspectie, dakisolatie, dakgoten, nokvorsten, stormschade, nieuwbouw, zakelijk dakwerk
-- [ ] Omschrijving van het werkgebied en de plaatsen die een eigen pagina krijgen
+- [ ] Omschrijving van het werkgebied en de plaatsen die een eigen pagina krijgen (nu: Elst, Zutphen, Arnhem)
+- [ ] Regio voor in de hoofdkop van de homepage (bijv. "regio Arnhem")
 
 ## Huisstijl
 
 - [ ] Logo als vectorbestand (SVG, AI of EPS). Nu staat er een natekening van het 160 px-logo in `src/components/layout/Logo.tsx`; die graag laten goedkeuren.
+
+## Projecten (`content/projects.ts`)
+
+Per project (Nieuwbouw Zutphen, Nieuwbouw Schuytgraaf Arnhem, Dakrenovatie Elst):
+
+- [ ] Omschrijving, wat er gedaan is, gebruikte materialen, duur en jaar
+- [ ] Welke diensten er zijn uitgevoerd
+- [ ] Echte voor/na-foto's vanuit hetzelfde standpunt (dan gaat de voor/na-schuif aan)
+
+## Foto's
+
+- [ ] Toestemming van herkenbare personen op de werkfoto's (twee foto's van Schuytgraaf en de foto van de dakdekker met helm)
+- [ ] Alt-teksten laten nalezen: ze beschrijven wat ik op de foto's zie (`scripts/migrate-images.mjs`)
+
+## Teksten
+
+- [ ] Antwoorden bij de veelgestelde vragen laten nalezen (`content/faq.ts`)
+- [ ] Reactietijd na een aanvraag (voor de FAQ en de bedankpagina)
+- [ ] Google-reviews om over te nemen (`content/reviews.ts`)

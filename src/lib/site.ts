@@ -1,5 +1,6 @@
 import { site } from "@config/site";
 import type { ServiceCategory } from "@config/types";
+import { places, type PlaceSummary } from "@content/places";
 import { services, type ServiceSummary } from "@content/services";
 
 export interface ServiceGroup {
@@ -52,3 +53,23 @@ export const routes = {
 export const showTodos =
   process.env.NEXT_PUBLIC_SHOW_TODOS === "true" ||
   (process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_SHOW_TODOS !== "false");
+
+export function projectHref(slug: string): string {
+  return `/projecten/${slug}/`;
+}
+
+export function placeHref(slug: string): string {
+  return `/dakdekker-${slug}/`;
+}
+
+/** Plaatsen met een eigen pagina, in de volgorde van `site.serviceArea.places`. */
+export function getActivePlaces(): PlaceSummary[] {
+  return site.serviceArea.places
+    .map((slug) => places.find((place) => place.slug === slug))
+    .filter((place): place is PlaceSummary => place !== undefined);
+}
+
+/** "Elst, Zutphen en Arnhem" */
+export function formatList(items: string[]): string {
+  return new Intl.ListFormat("nl-NL", { style: "long", type: "conjunction" }).format(items);
+}

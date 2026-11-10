@@ -110,7 +110,7 @@ export function Footer() {
                 {contact.phoneDisplay}
               </a>
               <br />
-              <a href={mailHref(contact.email)} className="inline-flex min-h-9 items-center gap-3 break-all text-on-dark-muted underline-offset-4 hover:text-white hover:underline">
+              <a href={mailHref(contact.email)} className="inline-flex min-h-9 items-center gap-3 wrap-anywhere text-on-dark-muted underline-offset-4 hover:text-white hover:underline">
                 <Icon name="mail" className="text-brand" />
                 {contact.email}
               </a>

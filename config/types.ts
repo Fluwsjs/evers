@@ -127,6 +127,8 @@ export interface SiteConfig {
 
   serviceArea: {
     summary: string | null;
+    /** Regio voor in koppen, bijvoorbeeld "regio Arnhem". `null` = kop zonder regio. */
+    regionLabel: string | null;
     /** Slugs van plaatsen met een eigen pagina (zie /content/places). */
     places: string[];
   };

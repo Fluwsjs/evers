@@ -69,9 +69,14 @@ export const site: SiteConfig = {
   keyFigures: [], // TODO: aanleveren door klant (jaren ervaring, aantal projecten: alleen echte cijfers)
 
   brands: [
+    // De eerste vier staan als logo op de huidige site; VELUX volgt uit de dienst dakramen.
+    // Logo's worden pas getoond als de klant bestanden aanlevert die gebruikt mogen worden.
     { name: "Koramic", logo: null, url: null }, // TODO: aanleveren door klant (logo met toestemming)
+    { name: "Monier", logo: null, url: null }, // TODO: aanleveren door klant (logo met toestemming)
+    { name: "Kingspan Unidek", logo: null, url: null }, // TODO: aanleveren door klant (logo met toestemming)
+    { name: "Keralit", logo: null, url: null }, // TODO: aanleveren door klant (logo met toestemming)
     { name: "VELUX", logo: null, url: null }, // TODO: aanleveren door klant (logo met toestemming)
-    // TODO: aanleveren door klant (overige merken waarmee gewerkt wordt)
+    // TODO: aanleveren door klant (lijst met merken bevestigen en aanvullen)
   ],
 
   certifications: [
@@ -125,7 +130,9 @@ export const site: SiteConfig = {
 
   serviceArea: {
     summary: null, // TODO: aanleveren door klant (omschrijving werkgebied)
-    places: ["elst", "zutphen"], // TODO: aanleveren door klant (vestigingsplaats en overige plaatsen)
+    regionLabel: null, // TODO: aanleveren door klant (regio voor in de hoofdkop, bijv. "regio Arnhem")
+    // Plaatsen waar projecten zijn uitgevoerd. De vestigingsplaats komt erbij zodra die bekend is.
+    places: ["elst", "zutphen", "arnhem"], // TODO: aanleveren door klant (vestigingsplaats en overige plaatsen)
   },
 
   features: {
