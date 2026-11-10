@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 5. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 6. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)
@@ -62,3 +62,11 @@ Per project (Nieuwbouw Zutphen, Nieuwbouw Schuytgraaf Arnhem, Dakrenovatie Elst)
 - [ ] VELUX dakramen: verzorgt Evers ook de binnenafwerking, en klopt "doorgaans binnen een dag geplaatst"?
 - [ ] Foto van een gerenoveerde schoorsteen (de pagina Schoorsteenrenovatie heeft nog geen foto)
 - [ ] Passender foto's voor Platte daken en Timmerwerk (nu de best beschikbare foto's uit het project Elst)
+
+## Formulieren en mail
+
+- [ ] Mailgegevens voor het verzenden: SMTP-server of Resend-account, en een afzenderadres op het eigen domein (zie `.env.example`). Zonder deze gegevens kunnen de formulieren in productie niet verzenden.
+- [ ] Op welk adres moeten aanvragen binnenkomen (nu het outlook.com-adres)?
+- [ ] Cloudflare Turnstile-sleutels (gratis Cloudflare-account) voor de spambeveiliging
+- [ ] Reactietijd na een aanvraag, voor de bedankpagina en de bevestigingsmail
+- [ ] Tekst van de bevestigingsmail laten nalezen (`src/lib/mail/templates.ts`)

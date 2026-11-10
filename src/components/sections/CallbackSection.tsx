@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { site } from "@config/site";
 import { images } from "@content/images.generated";
+import { CallbackForm } from "@/components/forms/CallbackForm";
 import { ButtonLink } from "@/components/ui/Button";
-import { ClientTodo } from "@/components/ui/ClientTodo";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { routes } from "@/lib/site";
@@ -10,8 +10,7 @@ import { telHref, whatsappHref } from "@/lib/utils";
 
 /**
  * Afsluitende oproep op de homepage.
- * Het terugbelformulier (naam, telefoon, voorkeursmoment) wordt in fase 6 gebouwd,
- * samen met de mailafhandeling, en komt dan in het rechterblok.
+ * Links bellen of WhatsApp, rechts het terugbelformulier.
  */
 export function CallbackSection() {
   const { contact, features } = site;
@@ -59,19 +58,10 @@ export function CallbackSection() {
 
         <div className="rounded-card bg-white p-6 text-ink shadow-card sm:p-8">
           <h3 className="text-2xl">Wij bellen u terug</h3>
-          <p className="mt-2 text-muted">
-            Laat uw naam en telefoonnummer achter en kies wanneer het u uitkomt. Dat kan binnenkort hier; tot die tijd
-            bereikt u ons via het offerteformulier.
+          <p className="mt-2 mb-6 text-muted">
+            Laat uw naam en telefoonnummer achter en kies wanneer het u uitkomt.
           </p>
-          <p className="mt-3">
-            <ClientTodo>terugbelformulier volgt in fase 6</ClientTodo>
-          </p>
-          <div className="mt-6">
-            <ButtonLink href={routes.quote} variant="dark">
-              Offerte aanvragen
-              <Icon name="arrow-right" />
-            </ButtonLink>
-          </div>
+          <CallbackForm privacyHref={routes.privacy} thanksHref={routes.thanks} />
         </div>
       </Container>
     </section>
