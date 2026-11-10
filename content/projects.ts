@@ -18,6 +18,11 @@ export interface Project {
   year: number | null;
   cover: ImageKey;
   images: ImageKey[];
+  /**
+   * Voor/na-paar voor de schuifvergelijking. Alleen invullen met twee echte foto's
+   * vanuit (vrijwel) hetzelfde standpunt. Wordt getoond als `site.features.beforeAfter` aan staat.
+   */
+  beforeAfter?: { before: ImageKey; after: ImageKey; caption?: string };
   /** Pad op de oude WordPress-site, voor de 301-redirect. */
   legacyPath: string;
 }

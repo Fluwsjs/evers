@@ -1,6 +1,6 @@
 # Aan te leveren door de klant
 
-Bijgewerkt na fase 4. Elk punt staat in de code als `TODO: aanleveren door klant`
+Bijgewerkt na fase 5. Elk punt staat in de code als `TODO: aanleveren door klant`
 (zoek op die tekst). Tot een punt is ingevuld toont de site dat onderdeel niet.
 
 ## Bedrijfsgegevens (`config/site.ts`)

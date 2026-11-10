@@ -1,17 +1,21 @@
+import { site } from "@config/site";
+import { images } from "@content/images.generated";
 import { projects } from "@content/projects";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { routes } from "@/lib/site";
+import { BeforeAfterSlider } from "./BeforeAfterSlider";
 import { ProjectCard } from "./ProjectCard";
 
 /**
- * Uitgelichte projecten. De voor/na-schuif komt hieronder zodra er echte
- * voor/na-foto's zijn (`site.features.beforeAfter`); het onderdeel wordt in fase 5 gebouwd.
+ * Uitgelichte projecten, met daaronder de voor/na-schuif van projecten die een
+ * echt voor/na-paar hebben (en alleen als `site.features.beforeAfter` aan staat).
  */
 export function ProjectHighlights({ limit = 3 }: { limit?: number }) {
   const highlighted = projects.slice(0, limit);
+  const comparisons = site.features.beforeAfter ? projects.filter((project) => project.beforeAfter).slice(0, 2) : [];
 
   return (
     <Section labelledBy="projecten-titel">
@@ -37,6 +41,21 @@ export function ProjectHighlights({ limit = 3 }: { limit?: number }) {
           </li>
         ))}
       </ul>
+
+      {comparisons.length > 0 ? (
+        <div className="mt-14 grid gap-8 md:grid-cols-2">
+          {comparisons.map((project) =>
+            project.beforeAfter ? (
+              <BeforeAfterSlider
+                key={project.slug}
+                before={images[project.beforeAfter.before]}
+                after={images[project.beforeAfter.after]}
+                caption={project.beforeAfter.caption ?? `${project.title}: schuif om het verschil te zien.`}
+              />
+            ) : null,
+          )}
+        </div>
+      ) : null}
     </Section>
   );
 }
