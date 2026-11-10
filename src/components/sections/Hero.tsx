@@ -11,8 +11,11 @@ import { QuoteStarter } from "./QuoteStarter";
 export const QUOTE_START_ID = "offerte";
 
 /**
- * Hero van de homepage: belofte, USP's, twee CTA's en een echte werkfoto,
- * met direct daaronder stap 1 van het offerteformulier.
+ * Hero van de homepage: een echte werkfoto over de volle breedte, met links de belofte,
+ * USP's en bellen, en rechts stap 1 van het offerteformulier als kaart.
+ *
+ * De foto is hier achtergrond (lege alt); een donker verloop eroverheen houdt de tekst
+ * leesbaar, ook waar de foto licht is.
  */
 export function Hero() {
   const { contact, serviceArea, usps } = site;
@@ -20,66 +23,70 @@ export function Hero() {
   const region = serviceArea.regionLabel ? ` in ${serviceArea.regionLabel}` : "";
 
   return (
-    <section aria-labelledby="hero-titel" className="bg-sand">
-      <Container className="grid gap-10 pt-10 pb-12 md:pt-16 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16 lg:pb-28">
+    <section aria-labelledby="hero-titel" className="on-dark relative isolate overflow-hidden bg-ink text-on-dark">
+      <Image
+        src={photo.src}
+        alt=""
+        width={photo.width}
+        height={photo.height}
+        priority
+        placeholder="blur"
+        blurDataURL={photo.blurDataURL}
+        sizes="100vw"
+        className="absolute inset-0 -z-20 size-full object-cover object-[50%_60%]"
+      />
+      {/* Donker verloop: links bijna dicht voor de tekst, rechts opener zodat de foto zichtbaar blijft. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-ink/80 lg:bg-transparent lg:bg-linear-to-r lg:from-ink/95 lg:from-15% lg:via-ink/75 lg:via-50% lg:to-ink/35"
+      />
+      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-linear-to-t from-ink/70 to-transparent" />
+
+      <Container className="grid gap-10 py-12 md:py-16 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14 lg:py-14 xl:gap-20">
         <div>
-          <p className="mb-4 flex items-center gap-3 text-sm font-semibold tracking-[0.14em] text-muted uppercase">
-            <span aria-hidden="true" className="h-0.5 w-8 bg-brand" />
+          <p className="mb-5 inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 py-1.5 pr-4 pl-1.5 text-sm font-semibold text-white backdrop-blur-sm">
+            <span className="rounded-full bg-brand px-2.5 py-0.5 text-xs font-bold tracking-wide text-ink uppercase">
+              Dakdekker
+            </span>
             {site.shortName}
           </p>
-          <h1 id="hero-titel" className="text-4xl sm:text-5xl lg:text-6xl">
-            Dakdekker{region} voor dakrenovatie en nieuwbouw
+          <h1 id="hero-titel" className="text-4xl text-white sm:text-5xl xl:text-6xl">
+            Dakdekker{region} voor dakrenovatie <span className="text-brand">en nieuwbouw</span>
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-muted">
+          <p className="mt-5 max-w-xl text-lg text-on-dark">
             Van een nieuw pannendak tot lood- en zinkwerk. Wij komen bij u kijken, leggen uit wat nodig is en maken
             een duidelijke offerte.
           </p>
 
-          <ul className="mt-7 grid max-w-xl gap-x-8 gap-y-2 sm:grid-cols-2">
+          <ul className="mt-8 grid max-w-xl gap-x-6 gap-y-3 sm:grid-cols-2">
             {usps.map((usp) => (
-              <li key={usp} className="flex items-center gap-3 font-medium">
-                <Icon name="check" className="text-brand-strong" />
+              <li key={usp} className="flex items-center gap-3 font-medium text-white">
+                <span aria-hidden="true" className="grid size-7 shrink-0 place-items-center rounded-full bg-brand text-ink">
+                  <Icon name="check" className="size-4" />
+                </span>
                 {usp}
               </li>
             ))}
           </ul>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href={`#${QUOTE_START_ID}`} size="lg">
-              Offerte aanvragen
-              <Icon name="arrow-right" />
-            </ButtonLink>
-            <ButtonLink href={telHref(contact.phone)} variant="outline" size="lg">
+          <div className="mt-9 flex flex-wrap gap-3">
+            <ButtonLink href={telHref(contact.phone)} size="lg">
               <Icon name="phone" />
               Bel {contact.phoneDisplay}
             </ButtonLink>
+            <ButtonLink href={`#${QUOTE_START_ID}`} variant="outline-on-dark" size="lg" className="lg:hidden">
+              Offerte aanvragen
+              <Icon name="arrow-right" />
+            </ButtonLink>
           </div>
 
-          <GoogleScore className="mt-6 font-medium" />
+          <GoogleScore className="mt-6 font-medium text-white" />
         </div>
 
-        <div className="relative">
-          <Image
-            src={photo.src}
-            alt={photo.alt}
-            width={photo.width}
-            height={photo.height}
-            priority
-            placeholder="blur"
-            blurDataURL={photo.blurDataURL}
-            sizes="(min-width: 1024px) 34rem, 100vw"
-            className="aspect-4/3 w-full rounded-card object-cover object-[50%_65%] lg:aspect-4/5"
-          />
-          {/* Oranje daklijn als verwijzing naar het logo */}
-          <span aria-hidden="true" className="absolute -bottom-3 -left-3 -z-0 hidden h-24 w-24 rounded-bl-card border-b-4 border-l-4 border-brand lg:block" />
+        <div id={QUOTE_START_ID} className="scroll-mt-28">
+          <QuoteStarter />
         </div>
       </Container>
-
-      <div id={QUOTE_START_ID} className="scroll-mt-28 bg-linear-to-b from-sand from-50% to-white to-50%">
-        <Container className="lg:-mt-16">
-          <QuoteStarter />
-        </Container>
-      </div>
     </section>
   );
 }

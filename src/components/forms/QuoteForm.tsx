@@ -149,7 +149,7 @@ export function QuoteForm({
   const startedAt = useRef(0);
   const autoFilled = useRef({ street: "", city: "" });
   const pendingFocus = useRef<string | null>(null);
-  const isFirstRender = useRef(true);
+  const previousStep = useRef(step);
 
   useEffect(() => {
     startedAt.current = Date.now();
@@ -157,10 +157,9 @@ export function QuoteForm({
 
   // Na een stapwissel: focus op de kop van de stap, of op het eerste veld met een fout.
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    // Alleen na een echte stapwissel: bij het laden mag de pagina niet naar het formulier springen.
+    if (previousStep.current === step) return;
+    previousStep.current = step;
     if (pendingFocus.current) {
       document.getElementById(pendingFocus.current)?.focus();
       pendingFocus.current = null;
