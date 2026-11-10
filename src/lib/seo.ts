@@ -8,6 +8,14 @@ export function absoluteUrl(path = "/"): string {
   return new URL(path, site.url).toString();
 }
 
+/**
+ * Testversie: met SITE_NOINDEX=true vraagt de hele site aan zoekmachines om niets op te
+ * nemen. Bedoeld voor de periode dat de site al online staat (bijvoorbeeld op een
+ * netlify.app-adres) maar het echte domein nog naar de oude site wijst.
+ */
+export const noindexSite = process.env.SITE_NOINDEX === "true";
+export const NOINDEX: Metadata["robots"] = { index: false, follow: false };
+
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 
 /**
@@ -45,7 +53,7 @@ export function pageMetadata({ path, title, description, image, imageAlt, robots
     title,
     description,
     alternates: { canonical: path },
-    robots,
+    robots: noindexSite ? NOINDEX : robots,
     openGraph: {
       type: "website",
       locale: site.locale.replace("-", "_"),

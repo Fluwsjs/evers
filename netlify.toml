@@ -1,0 +1,14 @@
+# Instellingen voor Netlify. De Next.js-adapter van Netlify wordt automatisch herkend;
+# daar hoeft hier niets voor te staan.
+#
+# Omgevingsvariabelen (mail, spambeveiliging, statistieken, SITE_NOINDEX) zet u in
+# Netlify onder Project configuration > Environment variables. Zie .env.example voor de
+# volledige lijst met uitleg. Zet daar nooit wachtwoorden in dit bestand.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Dezelfde Node-versie als waarmee de site is gebouwd en getest.
+  NODE_VERSION = "24"
